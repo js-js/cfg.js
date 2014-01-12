@@ -33,7 +33,7 @@ describe('SSA.js', function() {
 
   test('linear flow', function() {
     var a = 1;
-    a = a + 2;
+    a += 2;
     return a;
   }, function() {/*
     block B0
@@ -70,7 +70,7 @@ describe('SSA.js', function() {
   test('just while', function() {
     var i = 0;
     while (i < 42)
-      i = i + 1;
+      i += 1;
     return i;
   }, function() {/*
     block B0 -> B1
@@ -93,8 +93,8 @@ describe('SSA.js', function() {
     while (i < 42) {
       var j = 0;
       while (j < 42) {
-        i = i + 1;
-        j = j + 1;
+        i += 1;
+        j += 1;
       }
     }
     return i;
@@ -127,7 +127,7 @@ describe('SSA.js', function() {
 
   test('just for', function() {
     var j = 1;
-    for (var i = 0; i < 42; i = i + 1) {
+    for (var i = 0; i < 42; i += 1) {
       j = j * 2;
     }
     return j;
