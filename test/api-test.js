@@ -150,4 +150,57 @@ describe('SSA.js', function() {
     block B4
       i25 = ret @j
   */});
+
+  test('just member assign', function() {
+    a.b = 1;
+  }, function() {/*
+    block B0
+      i1 = literal %1
+      i4 = loadGlobal %"a"
+      i5 = storeProperty i4, %"b", i1
+  */});
+
+  test('just double member assign', function() {
+    a.b.c = 1;
+  }, function() {/*
+    block B0
+      i1 = literal %1
+      i5 = loadGlobal %"a"
+      i6 = loadProperty i5, %"b"
+      i7 = storeProperty i6, %"c", i1
+  */});
+
+  test('just computed member assign', function() {
+    a[b] = 1;
+  }, function() {/*
+    block B0
+      i1 = literal %1
+      i3 = loadGlobal %"b"
+      i5 = loadGlobal %"a"
+      i6 = storeProperty i5, i3, i1
+  */});
+
+  test('just logical expression', function() {
+    return a || b && c;
+  }, function() {/*
+    block B0 -> B1, B2
+      i1 = loadGlobal %"a"
+      i3 = branch i1
+    block B1 -> B3
+      i4 = to_phi i2, i1
+    block B2 -> B4, B5
+      i6 = loadGlobal %"b"
+      i8 = branch i6
+    block B3
+      i2 = phi
+      i14 = ret i2
+    block B4 -> B6
+      i11 = loadGlobal %"c"
+      i12 = to_phi i7, i11
+    block B5 -> B6
+      i9 = to_phi i7, i6
+    block B6 -> B3
+      i7 = phi
+      i13 = to_phi i2, i7
+  */});
 });
