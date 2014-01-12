@@ -1,0 +1,27 @@
+{
+  "name": "ssa.js",
+  "version": "0.0.0",
+  "description": "Javascript AST to SSA converter",
+  "main": "lib/ssa.js",
+  "scripts": {
+    "test": "mocha --reporter spec test/*-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:indutny/ssa.js"
+  },
+  "keywords": [
+    "SSA",
+    "AST"
+  ],
+  "author": "Fedor Indutny <fedor@indutny.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/indutny/ssa.js/issues"
+  },
+  "homepage": "https://github.com/indutny/ssa.js",
+  "devDependencies": {
+    "esprima": "~1.0.4",
+    "ssa-ir": "~0.2.1"
+  }
+}
