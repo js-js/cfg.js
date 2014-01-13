@@ -203,4 +203,29 @@ describe('SSA.js', function() {
       i7 = phi
       i13 = to_phi i2, i7
   */});
+
+  test('just postfix update expression', function() {
+    var i = 0;
+    return i++;
+  }, function() {/*
+    block B0
+      @i = literal %undefined
+      @i = literal %0
+      i5 = nop @i
+      i8 = literal %1
+      @i = binary %"+", i5, i8
+      i10 = ret i5
+  */});
+
+  test('just prefix update expression', function() {
+    var i = 0;
+    return ++i;
+  }, function() {/*
+    block B0
+      @i = literal %undefined
+      @i = literal %0
+      i6 = literal %1
+      @i = binary %"+", @i, i6
+      i9 = ret @i
+  */});
 });
