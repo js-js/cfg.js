@@ -293,4 +293,19 @@ describe('SSA.js', function() {
       i12 = new i1, %3
       i13 = ret i12
   */});
+
+  test('just call expression', function() {
+    return fn(1, 2, 3);
+  }, function() {/*
+    block B0
+      i1 = loadGlobal %"fn"
+      i3 = literal %1
+      i5 = literal %2
+      i7 = literal %3
+      i8 = pushArg i7
+      i9 = pushArg i5
+      i10 = pushArg i3
+      i12 = call i1, %3
+      i13 = ret i12
+  */});
 });
