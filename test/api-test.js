@@ -278,4 +278,19 @@ describe('SSA.js', function() {
       @i = binary %"+", @i, i6
       i9 = ret @i
   */});
+
+  test('just new expression', function() {
+    return new Proto(1, 2, 3);
+  }, function() {/*
+    block B0
+      i1 = loadGlobal %"Proto"
+      i3 = literal %1
+      i5 = literal %2
+      i7 = literal %3
+      i8 = pushArg i7
+      i9 = pushArg i5
+      i10 = pushArg i3
+      i12 = new i1, %3
+      i13 = ret i12
+  */});
 });
