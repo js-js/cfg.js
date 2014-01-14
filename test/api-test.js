@@ -90,6 +90,30 @@ describe('SSA.js', function() {
       i16 = ret @i
   */});
 
+  test('just do while', function() {
+    var i = 0;
+    do
+      i += 1;
+    while (i < 42);
+    return i;
+  }, function() {/*
+    block B0 -> B3
+      @i = literal %undefined
+      @i = literal %0
+    block B1 -> B3
+    block B2 -> B6
+    block B3 -> B5
+    block B4 -> B5, B2
+      i6 = literal %42
+      i8 = binary %"<", @i, i6
+      i9 = branch i8
+    block B5 -> B1
+      i12 = literal %1
+      @i = binary %"+", @i, i12
+    block B6
+      i16 = ret @i
+  */});
+
   test('nested while', function() {
     var i = 0;
     while (i < 42) {
