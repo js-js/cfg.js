@@ -73,18 +73,20 @@ describe('SSA.js', function() {
       i += 1;
     return i;
   }, function() {/*
-    block B0 -> B1
+    block B0 -> B3
       @i = literal %undefined
       @i = literal %0
-    block B1 -> B2, B4
+    block B1 -> B3
+    block B2 -> B6
+    block B3 -> B4
+    block B4 -> B5, B2
       i6 = literal %42
       i8 = binary %"<", @i, i6
       i9 = branch i8
-    block B2 -> B3
+    block B5 -> B1
       i12 = literal %1
       @i = binary %"+", @i, i12
-    block B3 -> B1
-    block B4
+    block B6
       i16 = ret @i
   */});
 
@@ -99,30 +101,76 @@ describe('SSA.js', function() {
     }
     return i;
   }, function() {/*
-    block B0 -> B1
+    block B0 -> B3
       @i = literal %undefined
       @j = literal %undefined
       @i = literal %0
-    block B1 -> B2, B4
+    block B1 -> B3
+    block B2 -> B12
+    block B3 -> B4
+    block B4 -> B5, B2
       i8 = literal %42
       i10 = binary %"<", @i, i8
       i11 = branch i10
-    block B2 -> B5
+    block B5 -> B8
       @j = literal %0
-    block B3 -> B1
-    block B4
-      i31 = ret @i
-    block B5 -> B6, B8
+    block B6 -> B8
+    block B7 -> B11
+    block B8 -> B9
+    block B9 -> B10, B7
       i16 = literal %42
       i18 = binary %"<", @j, i16
       i19 = branch i18
-    block B6 -> B7
+    block B10 -> B6
       i22 = literal %1
       @i = binary %"+", @i, i22
       i27 = literal %1
       @j = binary %"+", @j, i27
-    block B7 -> B5
-    block B8 -> B3
+    block B11 -> B1
+    block B12
+      i31 = ret @i
+  */});
+
+  test('while with break/continue', function() {
+    var i = 0;
+    while (i < 42) {
+      i += 1;
+      if (i < 21)
+        continue;
+      if (i > 40)
+        break;
+    }
+    return i;
+  }, function() {/*
+    block B0 -> B3
+      @i = literal %undefined
+      @i = literal %0
+    block B1 -> B9
+    block B2 -> B13
+    block B3 -> B4
+    block B4 -> B5, B2
+      i6 = literal %42
+      i8 = binary %"<", @i, i6
+      i9 = branch i8
+    block B5 -> B6, B7
+      i12 = literal %1
+      @i = binary %"+", @i, i12
+      i17 = literal %21
+      i19 = binary %"<", @i, i17
+      i20 = branch i19
+    block B6 -> B9
+    block B7 -> B8
+    block B8 -> B10, B11
+      i23 = literal %40
+      i25 = binary %">", @i, i23
+      i26 = branch i25
+    block B9 -> B3
+    block B10 -> B13
+    block B11 -> B12
+    block B12 -> B1
+    block B13 -> B14
+    block B14
+      i28 = ret @i
   */});
 
   test('just for', function() {
@@ -132,22 +180,24 @@ describe('SSA.js', function() {
     }
     return j;
   }, function() {/*
-    block B0 -> B1
+    block B0 -> B3
       @j = literal %undefined
       @i = literal %undefined
       @j = literal %1
       @i = literal %0
-    block B1 -> B2, B4
+    block B1 -> B3
+      i21 = literal %1
+      @i = binary %"+", @i, i21
+    block B2 -> B6
+    block B3 -> B4
+    block B4 -> B5, B2
       i10 = literal %42
       i12 = binary %"<", @i, i10
       i13 = branch i12
-    block B2 -> B3
+    block B5 -> B1
       i16 = literal %2
       @j = binary %"*", @j, i16
-    block B3 -> B1
-      i21 = literal %1
-      @i = binary %"+", @i, i21
-    block B4
+    block B6
       i25 = ret @j
   */});
 
