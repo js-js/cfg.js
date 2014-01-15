@@ -391,4 +391,18 @@ describe('SSA.js', function() {
       i16 = storeProperty i1, i15, i13
       i17 = ret i1
   */});
+
+  test('just object', function() {
+    return { a: 1, 2: x };
+  }, function() {/*
+    block B0
+      i1 = object %2
+      i3 = literal %"a"
+      i5 = literal %1
+      i6 = storeProperty i1, i3, i5
+      i8 = literal %2
+      i10 = loadGlobal %"x"
+      i11 = storeProperty i1, i8, i10
+      i12 = ret i1
+  */});
 });
