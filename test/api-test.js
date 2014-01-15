@@ -230,8 +230,9 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i1 = literal %1
-      i4 = loadGlobal %"a"
-      i5 = storeProperty i4, %"b", i1
+      i3 = literal %"b"
+      i5 = loadGlobal %"a"
+      i6 = storeProperty i5, i3, i1
   */});
 
   test('just double member assign', function() {
@@ -239,9 +240,11 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i1 = literal %1
-      i5 = loadGlobal %"a"
-      i6 = loadProperty i5, %"b"
-      i7 = storeProperty i6, %"c", i1
+      i3 = literal %"c"
+      i5 = literal %"b"
+      i7 = loadGlobal %"a"
+      i8 = loadProperty i7, i5
+      i9 = storeProperty i8, i3, i1
   */});
 
   test('just computed member assign', function() {
@@ -358,7 +361,8 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       @a = literal %undefined
-      i4 = deleteProperty @a, %"b"
+      i3 = literal %"b"
+      i5 = deleteProperty @a, i3
   */});
 
   test('just sequence', function() {
@@ -369,5 +373,22 @@ describe('SSA.js', function() {
       i3 = loadGlobal %"b"
       i5 = loadGlobal %"c"
       i6 = ret i5
+  */});
+
+  test('just array', function() {
+    return [1, 2, 3];
+  }, function() {/*
+    block B0
+      i1 = array %3
+      i3 = literal %1
+      i5 = literal %0
+      i6 = storeProperty i1, i5, i3
+      i8 = literal %2
+      i10 = literal %1
+      i11 = storeProperty i1, i10, i8
+      i13 = literal %3
+      i15 = literal %2
+      i16 = storeProperty i1, i15, i13
+      i17 = ret i1
   */});
 });
