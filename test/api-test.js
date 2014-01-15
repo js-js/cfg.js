@@ -405,4 +405,12 @@ describe('SSA.js', function() {
       i11 = storeProperty i1, i8, i10
       i12 = ret i1
   */});
+
+  test('empty return', function() {
+    return;
+  }, function() {/*
+    block B0
+      i1 = literal %undefined
+      i2 = ret i1
+  */});
 });
