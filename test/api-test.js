@@ -332,4 +332,32 @@ describe('SSA.js', function() {
       i12 = call i1, %3
       i13 = ret i12
   */});
+
+  test('just unary operation', function() {
+    var i = 0;
+    return -i;
+  }, function() {/*
+    block B0
+      @i = literal %undefined
+      @i = literal %0
+      i6 = unary %"-", @i
+      i7 = ret i6
+  */});
+
+
+  test('global delete', function() {
+    delete a;
+  }, function() {/*
+    block B0
+      i1 = deleteGlobal %"a"
+  */});
+
+  test('member delete', function() {
+    var a;
+    delete a.b;
+  }, function() {/*
+    block B0
+      @a = literal %undefined
+      i4 = deleteProperty @a, %"b"
+  */});
 });
