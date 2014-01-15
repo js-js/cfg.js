@@ -4,6 +4,28 @@
 
 WIP
 
+## Instructions
+
+* `literal(%value)`
+* `loadProperty(obj, prop)`
+* `storeProperty(obj, prop, value)`
+* `deleteProperty(obj, prop)`
+* `loadGlobal(%prop)`
+* `storeGlobal(%prop)`
+* `deleteGlobal(%prop)`
+* `loadContext(%depth, %index)`
+* `storeContext(%depth, %index, value)`
+* `binary(%operator, left, right)`
+* `unary(%operator, arg)`
+* `branch(cond)`
+* `nop(arg)` (just return arg)
+* `pushArg(arg)`
+* `call(fn)`
+* `new(constructor)`
+* `array(suggested-size)`
+* `object(suggested-size)`
+* `ret(value)`
+
 #### LICENSE
 
 This software is licensed under the MIT License.
