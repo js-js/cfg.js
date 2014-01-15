@@ -360,4 +360,14 @@ describe('SSA.js', function() {
       @a = literal %undefined
       i4 = deleteProperty @a, %"b"
   */});
+
+  test('just sequence', function() {
+    return (a, b, c);
+  }, function() {/*
+    block B0
+      i1 = loadGlobal %"a"
+      i3 = loadGlobal %"b"
+      i5 = loadGlobal %"c"
+      i6 = ret i5
+  */});
 });
