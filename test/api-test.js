@@ -108,23 +108,22 @@ describe('SSA.js', function() {
     block B0 -> B2, B3
       @a = literal %undefined
       @b = literal %undefined
-      i9 = fn %"B1"
-      i12 = storeContext %0, %0, i9
+      @x = fn %"B1"
       @a = literal %1
-      i16 = branch @a
+      i15 = branch @a
     block B2 -> B4
-      i18 = literal %1
-      i21 = storeContext %0, %1, i18
+      i17 = literal %1
+      i20 = storeContext %0, %0, i17
     block B3 -> B4
-      i23 = literal %2
-      i26 = storeContext %0, %1, i23
+      i22 = literal %2
+      i25 = storeContext %0, %0, i22
     block B4
-      i29 = loadContext %0, %0
-      i31 = call i29, %0
-      i32 = ret i31
+      i28 = call @x, %0
+      i29 = ret i28
     block B1
-      i6 = loadContext %1, %1
-      i7 = ret i6
+      i5 = literal %undefined
+      i8 = loadContext %1, %0
+      i9 = ret i8
   */});
 
   test('just while', function() {
@@ -500,22 +499,21 @@ describe('SSA.js', function() {
     }
   }, function() {/*
     block B0
-      i46 = fn %"B1"
-      i49 = storeContext %0, %0, i46
-      i52 = loadContext %0, %0
-      i54 = literal %1
-      i56 = literal %2
-      i58 = literal %3
-      i59 = pushArg i58
-      i60 = pushArg i56
-      i61 = pushArg i54
-      i63 = call i52, %3
-      i64 = ret i63
+      @a = fn %"B1"
+      i49 = literal %1
+      i51 = literal %2
+      i53 = literal %3
+      i54 = pushArg i53
+      i55 = pushArg i51
+      i56 = pushArg i49
+      i58 = call @a, %3
+      i59 = ret i58
     block B1 -> B2, B3
       @b = loadArg %0
       @c = loadArg %1
       @d = loadArg %2
-      i8 = loadContext %1, %0
+      i7 = literal %undefined
+      i8 = self
       i10 = literal %0
       i12 = literal %0
       i14 = literal %0
@@ -549,20 +547,20 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i46 = fn %"B1"
-      i49 = storeContext %0, %0, i46
-      i51 = literal %1
-      i53 = literal %2
-      i55 = literal %3
-      i56 = pushArg i55
-      i57 = pushArg i53
-      i58 = pushArg i51
-      i60 = call i49, %3
-      i61 = ret i60
+      i48 = literal %1
+      i50 = literal %2
+      i52 = literal %3
+      i53 = pushArg i52
+      i54 = pushArg i50
+      i55 = pushArg i48
+      i57 = call i46, %3
+      i58 = ret i57
     block B1 -> B2, B3
       @b = loadArg %0
       @c = loadArg %1
       @d = loadArg %2
-      i8 = loadContext %1, %0
+      i7 = literal %undefined
+      i8 = self
       i10 = literal %0
       i12 = literal %0
       i14 = literal %0
