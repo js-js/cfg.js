@@ -118,8 +118,9 @@ describe('SSA.js', function() {
       i22 = literal %2
       i25 = storeContext %0, %0, i22
     block B4
-      i28 = call @x, %0
-      i29 = ret i28
+      i27 = global
+      i29 = call @x, i27, %0
+      i30 = ret i29
     block B1
       i5 = literal %undefined
       i8 = loadContext %1, %0
@@ -405,8 +406,9 @@ describe('SSA.js', function() {
       i8 = pushArg i7
       i9 = pushArg i5
       i10 = pushArg i3
-      i12 = call i1, %3
-      i13 = ret i12
+      i11 = global
+      i13 = call i1, i11, %3
+      i14 = ret i13
   */});
 
   test('just unary operation', function() {
@@ -514,14 +516,15 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       @a = fn %"B1"
-      i49 = literal %1
-      i51 = literal %2
-      i53 = literal %3
-      i54 = pushArg i53
-      i55 = pushArg i51
-      i56 = pushArg i49
-      i58 = call @a, %3
-      i59 = ret i58
+      i50 = literal %1
+      i52 = literal %2
+      i54 = literal %3
+      i55 = pushArg i54
+      i56 = pushArg i52
+      i57 = pushArg i50
+      i58 = global
+      i60 = call @a, i58, %3
+      i61 = ret i60
     block B1 -> B2, B3
       @b = loadArg %0
       @c = loadArg %1
@@ -534,21 +537,22 @@ describe('SSA.js', function() {
       i15 = pushArg i14
       i16 = pushArg i12
       i17 = pushArg i10
-      i19 = call i8, %3
-      i21 = literal %0
-      i23 = binary %"<", i19, i21
-      i24 = branch i23
+      i18 = global
+      i20 = call i8, i18, %3
+      i22 = literal %0
+      i24 = binary %"<", i20, i22
+      i25 = branch i24
     block B2
-      i26 = literal %0
-      i29 = binary %"-", i26, @b
-      i32 = binary %"-", i29, @c
-      i35 = binary %"-", i32, @d
-      i36 = ret i35
+      i27 = literal %0
+      i30 = binary %"-", i27, @b
+      i33 = binary %"-", i30, @c
+      i36 = binary %"-", i33, @d
+      i37 = ret i36
     block B3 -> B4
     block B4
-      i40 = binary %"+", @b, @c
-      i43 = binary %"+", i40, @d
-      i44 = ret i43
+      i41 = binary %"+", @b, @c
+      i44 = binary %"+", i41, @d
+      i45 = ret i44
   */});
 
   test('just a function expression', function() {
@@ -559,15 +563,16 @@ describe('SSA.js', function() {
     })(1, 2, 3);
   }, function() {/*
     block B0
-      i46 = fn %"B1"
-      i48 = literal %1
-      i50 = literal %2
-      i52 = literal %3
-      i53 = pushArg i52
-      i54 = pushArg i50
-      i55 = pushArg i48
-      i57 = call i46, %3
-      i58 = ret i57
+      i47 = fn %"B1"
+      i49 = literal %1
+      i51 = literal %2
+      i53 = literal %3
+      i54 = pushArg i53
+      i55 = pushArg i51
+      i56 = pushArg i49
+      i57 = global
+      i59 = call i47, i57, %3
+      i60 = ret i59
     block B1 -> B2, B3
       @b = loadArg %0
       @c = loadArg %1
@@ -580,24 +585,25 @@ describe('SSA.js', function() {
       i15 = pushArg i14
       i16 = pushArg i12
       i17 = pushArg i10
-      i19 = call i8, %3
-      i21 = literal %0
-      i23 = binary %"<", i19, i21
-      i24 = branch i23
+      i18 = global
+      i20 = call i8, i18, %3
+      i22 = literal %0
+      i24 = binary %"<", i20, i22
+      i25 = branch i24
     block B2
-      i26 = literal %0
-      i29 = binary %"-", i26, @b
-      i32 = binary %"-", i29, @c
-      i35 = binary %"-", i32, @d
-      i36 = ret i35
+      i27 = literal %0
+      i30 = binary %"-", i27, @b
+      i33 = binary %"-", i30, @c
+      i36 = binary %"-", i33, @d
+      i37 = ret i36
     block B3 -> B4
     block B4
-      i40 = binary %"+", @b, @c
-      i43 = binary %"+", i40, @d
-      i44 = ret i43
+      i41 = binary %"+", @b, @c
+      i44 = binary %"+", i41, @d
+      i45 = ret i44
   */});
 
-  test('just a function expression', function() {
+  test('just a this expression', function() {
     return this.a;
   }, function() {/*
     block B0
@@ -605,5 +611,16 @@ describe('SSA.js', function() {
       i2 = this
       i3 = loadProperty i2, i1
       i4 = ret i3
+  */});
+
+  test('call with context', function() {
+    return a.b();
+  }, function() {/*
+    block B0
+      i1 = literal %"b"
+      i3 = loadGlobal %"a"
+      i4 = loadProperty i3, i1
+      i6 = call i4, i3, %0
+      i7 = ret i6
   */});
 });

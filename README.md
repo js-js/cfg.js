@@ -20,7 +20,7 @@ WIP
 * `branch(cond)`
 * `nop(arg)` (just return arg)
 * `pushArg(arg)`
-* `call(fn, %argc)`
+* `call(fn, ctx, %argc)`
 * `new(constructor, %argc)`
 * `array(%suggested-size)`
 * `object(%suggested-size)`
@@ -28,6 +28,7 @@ WIP
 * `fn(%block-id)`
 * `this` - `this` variable
 * `self` - function itself
+* `global` - global object
 
 #### LICENSE
 
