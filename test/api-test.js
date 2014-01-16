@@ -110,21 +110,20 @@ describe('SSA.js', function() {
       @b = literal %undefined
       @x = fn %"B1"
       @a = literal %1
-      i15 = branch @a
+      i13 = branch @a
     block B2 -> B4
-      i17 = literal %1
-      i20 = storeContext %0, %0, i17
+      i15 = literal %1
+      i18 = storeContext %0, %0, i15
     block B3 -> B4
-      i22 = literal %2
-      i25 = storeContext %0, %0, i22
+      i20 = literal %2
+      i23 = storeContext %0, %0, i20
     block B4
-      i27 = global
-      i29 = call @x, i27, %0
-      i30 = ret i29
+      i25 = global
+      i27 = call @x, i25, %0
+      i28 = ret i27
     block B1
-      i5 = literal %undefined
-      i8 = loadContext %1, %0
-      i9 = ret i8
+      i6 = loadContext %1, %0
+      i7 = ret i6
   */});
 
   test('just while', function() {
@@ -516,43 +515,42 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       @a = fn %"B1"
-      i50 = literal %1
-      i52 = literal %2
-      i54 = literal %3
-      i55 = pushArg i54
-      i56 = pushArg i52
-      i57 = pushArg i50
-      i58 = global
-      i60 = call @a, i58, %3
-      i61 = ret i60
+      i48 = literal %1
+      i50 = literal %2
+      i52 = literal %3
+      i53 = pushArg i52
+      i54 = pushArg i50
+      i55 = pushArg i48
+      i56 = global
+      i58 = call @a, i56, %3
+      i59 = ret i58
     block B1 -> B2, B3
       @b = loadArg %0
       @c = loadArg %1
       @d = loadArg %2
-      i7 = literal %undefined
-      i8 = self
+      i6 = self
+      i8 = literal %0
       i10 = literal %0
       i12 = literal %0
-      i14 = literal %0
-      i15 = pushArg i14
-      i16 = pushArg i12
-      i17 = pushArg i10
-      i18 = global
-      i20 = call i8, i18, %3
-      i22 = literal %0
-      i24 = binary %"<", i20, i22
-      i25 = branch i24
+      i13 = pushArg i12
+      i14 = pushArg i10
+      i15 = pushArg i8
+      i16 = global
+      i18 = call i6, i16, %3
+      i20 = literal %0
+      i22 = binary %"<", i18, i20
+      i23 = branch i22
     block B2
-      i27 = literal %0
-      i30 = binary %"-", i27, @b
-      i33 = binary %"-", i30, @c
-      i36 = binary %"-", i33, @d
-      i37 = ret i36
+      i25 = literal %0
+      i28 = binary %"-", i25, @b
+      i31 = binary %"-", i28, @c
+      i34 = binary %"-", i31, @d
+      i35 = ret i34
     block B3 -> B4
     block B4
-      i41 = binary %"+", @b, @c
-      i44 = binary %"+", i41, @d
-      i45 = ret i44
+      i39 = binary %"+", @b, @c
+      i42 = binary %"+", i39, @d
+      i43 = ret i42
   */});
 
   test('just a function expression', function() {
@@ -563,44 +561,43 @@ describe('SSA.js', function() {
     })(1, 2, 3);
   }, function() {/*
     block B0
-      i47 = fn %"B1"
-      i49 = literal %1
-      i51 = literal %2
-      i53 = literal %3
-      i54 = pushArg i53
-      i55 = pushArg i51
-      i56 = pushArg i49
-      i57 = global
-      i59 = call i47, i57, %3
-      i60 = ret i59
+      i45 = fn %"B1"
+      i47 = literal %1
+      i49 = literal %2
+      i51 = literal %3
+      i52 = pushArg i51
+      i53 = pushArg i49
+      i54 = pushArg i47
+      i55 = global
+      i57 = call i45, i55, %3
+      i58 = ret i57
     block B1 -> B2, B3
       @b = loadArg %0
       @c = loadArg %1
       @d = loadArg %2
-      i7 = literal %undefined
-      i8 = self
+      i6 = self
+      i8 = literal %0
       i10 = literal %0
       i12 = literal %0
-      i14 = literal %0
-      i15 = pushArg i14
-      i16 = pushArg i12
-      i17 = pushArg i10
-      i18 = global
-      i20 = call i8, i18, %3
-      i22 = literal %0
-      i24 = binary %"<", i20, i22
-      i25 = branch i24
+      i13 = pushArg i12
+      i14 = pushArg i10
+      i15 = pushArg i8
+      i16 = global
+      i18 = call i6, i16, %3
+      i20 = literal %0
+      i22 = binary %"<", i18, i20
+      i23 = branch i22
     block B2
-      i27 = literal %0
-      i30 = binary %"-", i27, @b
-      i33 = binary %"-", i30, @c
-      i36 = binary %"-", i33, @d
-      i37 = ret i36
+      i25 = literal %0
+      i28 = binary %"-", i25, @b
+      i31 = binary %"-", i28, @c
+      i34 = binary %"-", i31, @d
+      i35 = ret i34
     block B3 -> B4
     block B4
-      i41 = binary %"+", @b, @c
-      i44 = binary %"+", i41, @d
-      i45 = ret i44
+      i39 = binary %"+", @b, @c
+      i42 = binary %"+", i39, @d
+      i43 = ret i42
   */});
 
   test('just a this expression', function() {
