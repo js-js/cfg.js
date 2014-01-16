@@ -11,7 +11,7 @@ WIP
 * `storeProperty(obj, prop, value)`
 * `deleteProperty(obj, prop)`
 * `loadGlobal(%prop)`
-* `storeGlobal(%prop)`
+* `storeGlobal(%prop, value)`
 * `deleteGlobal(%prop)`
 * `loadContext(%depth, %index)`
 * `storeContext(%depth, %index, value)`
@@ -20,8 +20,8 @@ WIP
 * `branch(cond)`
 * `nop(arg)` (just return arg)
 * `pushArg(arg)`
-* `call(fn)`
-* `new(constructor)`
+* `call(fn, %argc)`
+* `new(constructor, %argc)`
 * `array(suggested-size)`
 * `object(suggested-size)`
 * `ret(value)`
