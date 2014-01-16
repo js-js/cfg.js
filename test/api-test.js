@@ -284,6 +284,20 @@ describe('SSA.js', function() {
       i25 = ret @j
   */});
 
+  test('empty for', function() {
+    for (;;);
+  }, function() {/*
+    block B0 -> B3
+    block B1 -> B3
+    block B2 -> B6
+    block B3 -> B4
+    block B4 -> B5, B2
+      i1 = literal %true
+      i2 = branch i1
+    block B5 -> B1
+    block B6
+  */});
+
   test('just member assign', function() {
     a.b = 1;
   }, function() {/*
