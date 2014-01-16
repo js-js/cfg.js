@@ -71,6 +71,62 @@ describe('SSA.js', function() {
       i13 = ret @b
   */});
 
+  test('if/else with var', function() {
+    var a = 1;
+    if (a) {
+      var b = 1;
+    } else {
+      var b = 2;
+    }
+    return b;
+  }, function() {/*
+    block B0 -> B1, B2
+      @a = literal %undefined
+      @b = literal %undefined
+      @a = literal %1
+      i7 = branch @a
+    block B1 -> B3
+      @b = literal %1
+    block B2 -> B3
+      @b = literal %2
+    block B3
+      i13 = ret @b
+  */});
+
+  test('if/else with context var', function() {
+    var a = 1;
+    if (a) {
+      var b = 1;
+    } else {
+      var b = 2;
+    }
+    function x() {
+      return b;
+    }
+    return x();
+  }, function() {/*
+    block B0 -> B2, B3
+      @a = literal %undefined
+      @b = literal %undefined
+      i9 = fn %"B1"
+      i12 = storeContext %0, %0, i9
+      @a = literal %1
+      i16 = branch @a
+    block B2 -> B4
+      i18 = literal %1
+      i21 = storeContext %0, %1, i18
+    block B3 -> B4
+      i23 = literal %2
+      i26 = storeContext %0, %1, i23
+    block B4
+      i29 = loadContext %0, %0
+      i31 = call i29, %0
+      i32 = ret i31
+    block B1
+      i6 = loadContext %1, %1
+      i7 = ret i6
+  */});
+
   test('just while', function() {
     var i = 0;
     while (i < 42)
