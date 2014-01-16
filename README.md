@@ -22,8 +22,8 @@ WIP
 * `pushArg(arg)`
 * `call(fn, %argc)`
 * `new(constructor, %argc)`
-* `array(suggested-size)`
-* `object(suggested-size)`
+* `array(%suggested-size)`
+* `object(%suggested-size)`
 * `ret(value)`
 * `fn(%block-id)`
 * `this` - `this` variable
