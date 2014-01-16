@@ -26,8 +26,12 @@ describe('SSA.js', function() {
       ast.body = ast.body[0].body.body;
 
       var out = ssa.construct(ast);
+      var str = out.map(function(cfg) {
+        return ir.stringify(cfg);
+      }).join('\n');
+
       var exp = expected.toString().replace(/^function.*{\/\*|\*\/}$/g, '');
-      assert.equal(strip(ir.stringify(out)), strip(exp));
+      assert.equal(strip(str), strip(exp));
     });
   }
 
@@ -429,5 +433,100 @@ describe('SSA.js', function() {
       block B3
       i2 = phi
       i10 = ret i2
+  */});
+
+  test('just a function declaration', function() {
+    return a(1, 2, 3);
+    function a(b, c, d) {
+      if (a(0, 0, 0) < 0)
+        return 0 - b - c - d;
+      return b + c + d;
+    }
+  }, function() {/*
+    block B0
+      i46 = fn %"B1"
+      i49 = storeContext %0, %0, i46
+      i52 = loadContext %0, %0
+      i54 = literal %1
+      i56 = literal %2
+      i58 = literal %3
+      i59 = pushArg i58
+      i60 = pushArg i56
+      i61 = pushArg i54
+      i63 = call i52, %3
+      i64 = ret i63
+    block B1 -> B2, B3
+      @b = loadArg %0
+      @c = loadArg %1
+      @d = loadArg %2
+      i8 = loadContext %1, %0
+      i10 = literal %0
+      i12 = literal %0
+      i14 = literal %0
+      i15 = pushArg i14
+      i16 = pushArg i12
+      i17 = pushArg i10
+      i19 = call i8, %3
+      i21 = literal %0
+      i23 = binary %"<", i19, i21
+      i24 = branch i23
+    block B2
+      i26 = literal %0
+      i29 = binary %"-", i26, @b
+      i32 = binary %"-", i29, @c
+      i35 = binary %"-", i32, @d
+      i36 = ret i35
+    block B3 -> B4
+    block B4
+      i40 = binary %"+", @b, @c
+      i43 = binary %"+", i40, @d
+      i44 = ret i43
+  */});
+
+
+  test('just a function expression', function() {
+    return (function a(b, c, d) {
+      if (a(0, 0, 0) < 0)
+        return 0 - b - c - d;
+      return b + c + d;
+    })(1, 2, 3);
+  }, function() {/*
+    block B0
+      i46 = fn %"B1"
+      i49 = storeContext %0, %0, i46
+      i51 = literal %1
+      i53 = literal %2
+      i55 = literal %3
+      i56 = pushArg i55
+      i57 = pushArg i53
+      i58 = pushArg i51
+      i60 = call i49, %3
+      i61 = ret i60
+    block B1 -> B2, B3
+      @b = loadArg %0
+      @c = loadArg %1
+      @d = loadArg %2
+      i8 = loadContext %1, %0
+      i10 = literal %0
+      i12 = literal %0
+      i14 = literal %0
+      i15 = pushArg i14
+      i16 = pushArg i12
+      i17 = pushArg i10
+      i19 = call i8, %3
+      i21 = literal %0
+      i23 = binary %"<", i19, i21
+      i24 = branch i23
+    block B2
+      i26 = literal %0
+      i29 = binary %"-", i26, @b
+      i32 = binary %"-", i29, @c
+      i35 = binary %"-", i32, @d
+      i36 = ret i35
+    block B3 -> B4
+    block B4
+      i40 = binary %"+", @b, @c
+      i43 = binary %"+", i40, @d
+      i44 = ret i43
   */});
 });
