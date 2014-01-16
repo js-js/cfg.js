@@ -537,7 +537,6 @@ describe('SSA.js', function() {
       i44 = ret i43
   */});
 
-
   test('just a function expression', function() {
     return (function a(b, c, d) {
       if (a(0, 0, 0) < 0)
@@ -582,5 +581,15 @@ describe('SSA.js', function() {
       i40 = binary %"+", @b, @c
       i43 = binary %"+", i40, @d
       i44 = ret i43
+  */});
+
+  test('just a function expression', function() {
+    return this.a;
+  }, function() {/*
+    block B0
+      i1 = literal %"a"
+      i2 = this
+      i3 = loadProperty i2, i1
+      i4 = ret i3
   */});
 });

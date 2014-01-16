@@ -25,6 +25,9 @@ WIP
 * `array(suggested-size)`
 * `object(suggested-size)`
 * `ret(value)`
+* `fn(%block-id)`
+* `this` - `this` variable
+* `self` - function itself
 
 #### LICENSE
 
