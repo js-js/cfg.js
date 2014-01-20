@@ -491,16 +491,16 @@ describe('SSA.js', function() {
   test('just a conditional expression', function() {
     return a ? b : c;
   }, function() {/*
-    block B0
+    block B0 -> B1, B2
       i1 = loadGlobal %"a"
       i3 = branch i1
-      block B1 -> B3
+    block B1 -> B3
       i5 = loadGlobal %"b"
       i6 = to_phi i2, i5
-      block B2 -> B3
+    block B2 -> B3
       i8 = loadGlobal %"c"
       i9 = to_phi i2, i8
-      block B3
+    block B3
       i2 = phi
       i10 = ret i2
   */});
