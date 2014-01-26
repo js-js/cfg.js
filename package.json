@@ -1,6 +1,6 @@
 {
   "name": "ssa.js",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Javascript AST to SSA converter",
   "main": "lib/ssa.js",
   "scripts": {
