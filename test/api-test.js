@@ -379,6 +379,33 @@ describe('SSA.js', function() {
       i9 = ret @i
   */});
 
+  test('member postfix update expression', function() {
+    return a.b++;
+  }, function() {/*
+    block B0
+      i1 = literal %"b"
+      i3 = loadGlobal %"a"
+      i4 = loadProperty i3, i1
+      i5 = nop i4
+      i8 = literal %1
+      i9 = binary %"+", i5, i8
+      i10 = storeProperty i3, i1, i9
+      i11 = ret i5
+  */});
+
+  test('member prefix update expression', function() {
+    return ++a.b;
+  }, function() {/*
+    block B0
+      i1 = literal %"b"
+      i3 = loadGlobal %"a"
+      i4 = loadProperty i3, i1
+      i6 = literal %1
+      i8 = binary %"+", i4, i6
+      i9 = storeProperty i3, i1, i8
+      i10 = ret i8
+  */});
+
   test('just new expression', function() {
     return new Proto(1, 2, 3);
   }, function() {/*
@@ -420,7 +447,6 @@ describe('SSA.js', function() {
       i6 = unary %"-", @i
       i7 = ret i6
   */});
-
 
   test('global delete', function() {
     delete a;
