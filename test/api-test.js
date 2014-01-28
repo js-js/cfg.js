@@ -27,7 +27,7 @@ describe('SSA.js', function() {
 
       var out = ssa.construct(ast);
       var str = out.map(function(cfg) {
-        return ir.stringify(cfg);
+        return ir.stringify(cfg.blocks);
       }).join('\n');
 
       var exp = expected.toString().replace(/^function.*{\/\*|\*\/}$/g, '');
