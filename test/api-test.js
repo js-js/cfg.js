@@ -20,31 +20,31 @@ describe('SSA.js', function() {
     if (actual === expected)
       return;
 
-    actual = actual.split('\n');
-    expected = expected.split('\n');
+    var actualLines = actual.split('\n');
+    var expectedLines = expected.split('\n');
     var width = 0;
 
-    expected.unshift('    expected:');
-    actual.unshift('    actual:');
-    var total = Math.max(actual.length, expected.length);
+    expectedLines.unshift('    expected:');
+    actualLines.unshift('    actual:');
+    var total = Math.max(actualLines.length, expectedLines.length);
 
-    if (actual.length !== total) {
-      for (var i = actual.length; i < total; i++)
-        actual.push('');
+    if (actualLines.length !== total) {
+      for (var i = actualLines.length; i < total; i++)
+        actualLines.push('');
     } else {
-      for (var i = expected.length; i < total; i++)
-        expected.push('');
+      for (var i = expectedLines.length; i < total; i++)
+        expectedLines.push('');
     }
 
     for (var i = 0; i < total; i++) {
-      width = Math.max(width, actual[i].length);
-      width = Math.max(width, expected[i].length);
+      width = Math.max(width, actualLines[i].length);
+      width = Math.max(width, expectedLines[i].length);
     }
 
     var out = '';
     for (var i = 0; i < total; i++) {
-      var left = expected[i];
-      var right = actual[i];
+      var left = expectedLines[i];
+      var right = actualLines[i];
 
       if (left !== right)
         out += '\033[31m';
@@ -56,21 +56,24 @@ describe('SSA.js', function() {
         out += ' ';
 
       out += '  |  ';
-      out += actual[i];
+      out += right;
 
       out += '\033[0m';
 
       out += '\n';
     }
 
-    throw new Error('SSA output mismatch:\n\n' + out);
+    throw new Error('SSA output mismatch:\n\n' + out + '\n' + actual);
   }
 
-  function test(name, input, expected) {
+  function test(name, input, expected, options) {
     it('should ' + name, function() {
       var ast = esprima.parse(
           input.toString().replace(/^function.*{|}$/g, '')
       );
+
+      if (options && options.global === false)
+        ast.type = 'Brogram';
 
       var out = ssa.construct(ast);
       var str = out.map(function(cfg) {
@@ -92,8 +95,11 @@ describe('SSA.js', function() {
       @a = literal %1 # 2
       i6 = literal %2 # 6
       @a = binary %"+", @a, i6 # 4
-      i10 = ret @a # 8
-  */});
+      i11 = literal %undefined # 0
+      i12 = ret i11 # 0
+  */}, {
+    global: false
+  });
 
   test('just if/else', function() {
     var a = 1;
@@ -115,8 +121,11 @@ describe('SSA.js', function() {
     block B2 -> B3
       @b = literal %2 # 13
     block B3
-      i13 = ret @b # 15
-  */});
+      i14 = literal %undefined # 0
+      i15 = ret i14 # 0
+  */}, {
+    global: false
+  });
 
   test('if/else with var', function() {
     var a = 1;
@@ -137,8 +146,11 @@ describe('SSA.js', function() {
     block B2 -> B3
       @b = literal %2 # 10
     block B3
-      i13 = ret @b # 12
-  */});
+      i14 = literal %undefined # 0
+      i15 = ret i14 # 0
+  */}, {
+    global: false
+  });
 
   test('if/else with context var', function() {
     var a = 1;
@@ -167,11 +179,14 @@ describe('SSA.js', function() {
     block B4
       i25 = global # 17
       i27 = call @x, i25, %0 # 17
-      i28 = ret i27 # 17
+      i29 = literal %undefined # 0
+      i30 = ret i29 # 0
     block B1
       i6 = loadContext %1, %0 # 4
       i7 = ret i6 # 3
-  */});
+  */}, {
+    global: false
+  });
 
   test('just while', function() {
     var i = 0;
@@ -193,8 +208,11 @@ describe('SSA.js', function() {
       i12 = literal %1 # 10
       @i = binary %"+", @i, i12 # 8
     block B6
-      i16 = ret @i # 12
-  */});
+      i17 = literal %undefined # 0
+      i18 = ret i17 # 0
+  */}, {
+    global: false
+  });
 
   test('just do while', function() {
     var i = 0;
@@ -217,8 +235,11 @@ describe('SSA.js', function() {
       i12 = literal %1 # 10
       @i = binary %"+", @i, i12 # 8
     block B6
-      i16 = ret @i # 12
-  */});
+      i17 = literal %undefined # 0
+      i18 = ret i17 # 0
+  */}, {
+    global: false
+  });
 
   test('nested while', function() {
     var i = 0;
@@ -258,8 +279,11 @@ describe('SSA.js', function() {
       @j = binary %"+", @j, i27 # 20
     block B11 -> B1
     block B12
-      i31 = ret @i # 24
-  */});
+      i32 = literal %undefined # 0
+      i33 = ret i32 # 0
+  */}, {
+    global: false
+  });
 
   test('while with break/continue', function() {
     var i = 0;
@@ -300,8 +324,11 @@ describe('SSA.js', function() {
     block B12 -> B1
     block B13 -> B14
     block B14
-      i28 = ret @i # 23
-  */});
+      i29 = literal %undefined # 0
+      i30 = ret i29 # 0
+  */}, {
+    global: false
+  });
 
   test('just for', function() {
     var j = 1;
@@ -328,8 +355,11 @@ describe('SSA.js', function() {
       i16 = literal %2 # 14
       @j = binary %"*", @j, i16 # 12
     block B6
-      i25 = ret @j # 19
-  */});
+      i26 = literal %undefined # 0
+      i27 = ret i26 # 0
+  */}, {
+    global: false
+  });
 
   test('empty for', function() {
     for (;;);
@@ -416,8 +446,11 @@ describe('SSA.js', function() {
       i5 = nop @i # 4
       i8 = literal %1 # 4
       @i = binary %"+", i5, i8 # 4
-      i10 = ret i5 # 4
-  */});
+      i11 = literal %undefined # 0
+      i12 = ret i11 # 0
+  */}, {
+    global: false
+  });
 
   test('just prefix update expression', function() {
     var i = 0;
@@ -428,8 +461,11 @@ describe('SSA.js', function() {
       @i = literal %0 # 2
       i6 = literal %1 # 4
       @i = binary %"+", @i, i6 # 4
-      i9 = ret @i # 4
-  */});
+      i10 = literal %undefined # 0
+      i11 = ret i10 # 0
+  */}, {
+    global: false
+  });
 
   test('member postfix update expression', function() {
     a.b++;
@@ -497,8 +533,11 @@ describe('SSA.js', function() {
       @i = literal %undefined # 0
       @i = literal %0 # 2
       i6 = unary %"-", @i # 4
-      i7 = ret i6 # 4
-  */});
+      i8 = literal %undefined # 0
+      i9 = ret i8 # 0
+  */}, {
+    global: false
+  });
 
   test('global delete', function() {
     delete a;
@@ -516,8 +555,11 @@ describe('SSA.js', function() {
       @a = literal %undefined # 0
       i3 = literal %"b" # 3
       i5 = deleteProperty @a, i3 # 3
-      i6 = ret i5 # 3
-  */});
+      i7 = literal %undefined # 0
+      i8 = ret i7 # 0
+  */}, {
+    global: false
+  });
 
   test('just sequence', function() {
     (a, b, c);
@@ -593,16 +635,18 @@ describe('SSA.js', function() {
     a(1, 2, 3);
   }, function() {/*
     block B0
-      @a = fn %"B1" # 1
-      i48 = literal %1 # 29
-      i50 = literal %2 # 30
-      i52 = literal %3 # 31
-      i53 = pushArg i52 # 27
-      i54 = pushArg i50 # 27
-      i55 = pushArg i48 # 27
-      i56 = global # 27
-      i58 = call @a, i56, %3 # 27
-      i59 = ret i58 # 27
+      i45 = fn %"B1" # 1
+      i47 = storeGlobal %"a", i45 # 0
+      i49 = loadGlobal %"a" # 28
+      i51 = literal %1 # 29
+      i53 = literal %2 # 30
+      i55 = literal %3 # 31
+      i56 = pushArg i55 # 27
+      i57 = pushArg i53 # 27
+      i58 = pushArg i51 # 27
+      i59 = global # 27
+      i61 = call i49, i59, %3 # 27
+      i62 = ret i61 # 27
     block B1 -> B2, B3
       @b = loadArg %0 # 1
       @c = loadArg %1 # 1
@@ -632,53 +676,6 @@ describe('SSA.js', function() {
       i43 = ret i42 # 19
   */});
 
-  test('just a function expression', function() {
-    (function a(b, c, d) {
-      if (a(0, 0, 0) < 0)
-        return 0 - b - c - d;
-      return b + c + d;
-    })(1, 2, 3);
-  }, function() {/*
-    block B0
-      i45 = fn %"B1" # 3
-      i47 = literal %1 # 27
-      i49 = literal %2 # 28
-      i51 = literal %3 # 29
-      i52 = pushArg i51 # 2
-      i53 = pushArg i49 # 2
-      i54 = pushArg i47 # 2
-      i55 = global # 2
-      i57 = call i45, i55, %3 # 2
-      i58 = ret i57 # 2
-    block B1 -> B2, B3
-      @b = loadArg %0 # 3
-      @c = loadArg %1 # 3
-      @d = loadArg %2 # 3
-      i6 = self # 8
-      i8 = literal %0 # 9
-      i10 = literal %0 # 10
-      i12 = literal %0 # 11
-      i13 = pushArg i12 # 7
-      i14 = pushArg i10 # 7
-      i15 = pushArg i8 # 7
-      i16 = global # 7
-      i18 = call i6, i16, %3 # 7
-      i20 = literal %0 # 12
-      i22 = binary %"<", i18, i20 # 6
-      i23 = branch i22 # 5
-    block B2
-      i25 = literal %0 # 17
-      i28 = binary %"-", i25, @b # 16
-      i31 = binary %"-", i28, @c # 15
-      i34 = binary %"-", i31, @d # 14
-      i35 = ret i34 # 13
-    block B3 -> B4
-    block B4
-      i39 = binary %"+", @b, @c # 23
-      i42 = binary %"+", i39, @d # 22
-      i43 = ret i42 # 21
-  */});
-
   test('just a this expression', function() {
     this.a;
   }, function() {/*
@@ -706,9 +703,10 @@ describe('SSA.js', function() {
     }
   }, function() {/*
     block B0
-      @test = fn %"B1" # 1
-      i9 = literal %undefined # 0
-      i10 = ret i9 # 0
+      i7 = fn %"B1" # 1
+      i9 = storeGlobal %"test", i7 # 0
+      i11 = literal %undefined # 0
+      i12 = ret i11 # 0
     block B1
       @a = loadArg %0 # 1
       i4 = literal %undefined # 1
