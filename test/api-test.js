@@ -78,7 +78,7 @@ describe('SSA.js', function() {
       var out = ssa.construct(ast);
       var str = out.map(function(cfg) {
         return ir.stringify(cfg.blocks);
-      }).join('\n');
+      }).join('\n----\n');
 
       var exp = expected.toString().replace(/^function.*{\/\*|\*\/}$/g, '');
       equalLines(strip(str), strip(exp));
@@ -181,6 +181,7 @@ describe('SSA.js', function() {
       i27 = call @x, i25, %0 # 17
       i29 = literal %undefined # 0
       i30 = ret i29 # 0
+    ----
     block B1
       i6 = loadContext %1, %0 # 4
       i7 = ret i6 # 3
@@ -647,6 +648,7 @@ describe('SSA.js', function() {
       i59 = global # 27
       i61 = call i49, i59, %3 # 27
       i62 = ret i61 # 27
+    ----
     block B1 -> B2, B3
       @b = loadArg %0 # 1
       @c = loadArg %1 # 1
@@ -707,9 +709,48 @@ describe('SSA.js', function() {
       i9 = storeGlobal %"test", i7 # 0
       i11 = literal %undefined # 0
       i12 = ret i11 # 0
+    ----
     block B1
       @a = loadArg %0 # 1
       i4 = literal %undefined # 1
       i5 = ret i4 # 1
+  */});
+
+  test('function boundary regression', function() {
+    function run() {
+      var x = 1;
+      for (var i = 0; i < 10; i++)
+        x += i;
+      return x;
+    }
+    run();
+  }, function() {/*
+  block B0
+    i27 = fn %"B1" # 1
+    i29 = storeGlobal %"run", i27 # 0
+    i31 = loadGlobal %"run" # 22
+    i32 = global # 21
+    i34 = call i31, i32, %0 # 21
+    i35 = ret i34 # 21
+  ----
+  block B1 -> B4
+    @x = literal %undefined # 1
+    @i = literal %undefined # 1
+    @x = literal %1 # 4
+    @i = literal %0 # 7
+  block B2 -> B4
+    i19 = nop @i # 15
+    i22 = literal %1 # 15
+    @i = binary %"+", i19, i22 # 15
+  block B3 -> B7
+  block B4 -> B5
+  block B5 -> B6, B3
+    i10 = literal %10 # 10
+    i12 = binary %"<", @i, i10 # 8
+    i13 = branch i12 # 5
+  block B6 -> B2
+    @x = binary %"+", @x, @i # 12
+  block B7
+    i25 = ret @x # 17
   */});
 });
