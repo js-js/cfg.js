@@ -142,16 +142,71 @@ describe('SSA.js/Deconstructor', function() {
 
   test('if/else', function() {/*
     block B0 -> B1, B2
-      @a = literal %undefined # 0
-      @b = literal %undefined # 0
       @a = literal %1 # 2
       i7 = branch @a # 4
     block B1 -> B3
-      @b = literal %1 # 9
+       @b = literal %1 # 9
     block B2 -> B3
       @b = literal %2 # 13
     block B3
-      i15 = ret @b # 0
+      t1 = literal %1
+      t2 = literal %2
+      t3 = binary %"+", @b, t1
+      t4 = binary %"+", @b, t2
+      i15 = ret t4
   */}, function() {
+    a = 1;
+    if (a) {
+      b = 1;
+    } else {
+      b = 2;
+    }
+    b + 1;
+    b + 2;
+  });
+
+  test('double if/else', function() {/*
+    block B0 -> B1, B2
+      @a = literal %1 # 2
+      i1 = branch @a # 4
+    block B1 -> B3
+       @b = literal %1 # 9
+    block B2 -> B3
+      @b = literal %2 # 13
+    block B3 -> B4
+      t1 = literal %1
+      t2 = literal %2
+      t3 = binary %"+", @b, t1
+      t4 = binary %"+", @b, t2
+    block B4 -> B5, B6
+      @a = literal %1 # 2
+      i2 = branch @a # 4
+    block B5 -> B7
+       @b = literal %3 # 9
+    block B6 -> B7
+      @b = literal %4 # 13
+    block B7
+      t5 = literal %3
+      t6 = literal %4
+      t7 = binary %"+", @b, t5
+      t8 = binary %"+", @b, t6
+      ret t8
+  */}, function() {
+    a = 1;
+    if (a) {
+      b = 1;
+    } else {
+      b = 2;
+    }
+    b + 1;
+    b + 2;
+    a = 1;
+    if (a) {
+      b = 3;
+    } else {
+      b = 4;
+    }
+    b + 3;
+    b + 4;
   });
 });
