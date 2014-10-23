@@ -31,6 +31,18 @@ describe('SSA.js/Deconstructor', function() {
     1 + 2;
   });
 
+  test('non-global scope returning expression', function() {/*
+    block B0
+      i1 = literal %1
+      i2 = literal %2
+      i3 = binary %"+", i1, i2
+      ret i3
+  */}, function() {
+    return 1 + 2;
+  }, {
+    global: false
+  });
+
   test('expression with the same literal in two inputs', function() {/*
     block B0
       i1 = literal %1
@@ -54,5 +66,44 @@ describe('SSA.js/Deconstructor', function() {
       i15 = ret i14 # 2
   */}, function() {
     fn(1, 2, 3);
+  });
+
+  test('context call expression', function() {/*
+    block B0
+      i1 = loadGlobal %"fn" # 3
+      i4 = literal %1 # 4
+      i6 = literal %2 # 5
+      i8 = literal %3 # 6
+      i9 = pushArg i8 # 2
+      i10 = pushArg i6 # 2
+      i11 = pushArg i4 # 2
+      i12 = loadGlobal %"ctx" # 2
+      i14 = call i1, i12, %3 # 2
+      i15 = ret i14 # 2
+  */}, function() {
+    fn.call(ctx, 1, 2, 3);
+  });
+
+  test('member call expression', function() {/*
+    block B0
+      i1 = literal %"b" # 3
+      i3 = loadGlobal %"a" # 4
+      i4 = loadProperty i3, i1 # 3
+      i6 = call i4, i3, %0 # 2
+      i7 = ret i6 # 2
+  */}, function() {
+    a.b();
+  });
+
+  test('member context call expression', function() {/*
+    block B0
+      i1 = literal %"b" # 3
+      i3 = loadGlobal %"a" # 4
+      i4 = loadProperty i3, i1 # 3
+      i5 = loadGlobal %"c"
+      i6 = call i4, i5, %0 # 2
+      i7 = ret i6 # 2
+  */}, function() {
+    a.b.call(c);
   });
 });
