@@ -3,69 +3,11 @@ var esprima = require('esprima');
 var ir = require('ssa-ir');
 var ssa = require('../');
 
+var fixtures = require('./fixtures');
+var strip = fixtures.strip;
+var equalLines = fixtures.equalLines;
+
 describe('SSA.js', function() {
-  function strip(source) {
-    var lines = source.split(/\r\n|\r|\n/g);
-
-    var out = lines.map(function(line) {
-      return line.replace(/^\s*/, '');
-    }).filter(function(line) {
-      return !!line;
-    });
-
-    return out.join('\n');
-  }
-
-  function equalLines(actual, expected) {
-    if (actual === expected)
-      return;
-
-    var actualLines = actual.split('\n');
-    var expectedLines = expected.split('\n');
-    var width = 0;
-
-    expectedLines.unshift('    expected:');
-    actualLines.unshift('    actual:');
-    var total = Math.max(actualLines.length, expectedLines.length);
-
-    if (actualLines.length !== total) {
-      for (var i = actualLines.length; i < total; i++)
-        actualLines.push('');
-    } else {
-      for (var i = expectedLines.length; i < total; i++)
-        expectedLines.push('');
-    }
-
-    for (var i = 0; i < total; i++) {
-      width = Math.max(width, actualLines[i].length);
-      width = Math.max(width, expectedLines[i].length);
-    }
-
-    var out = '';
-    for (var i = 0; i < total; i++) {
-      var left = expectedLines[i];
-      var right = actualLines[i];
-
-      if (left !== right)
-        out += '\033[31m';
-      else
-        out += '\033[32m';
-
-      out += left;
-      for (var j = left.length; j < width; j++)
-        out += ' ';
-
-      out += '  |  ';
-      out += right;
-
-      out += '\033[0m';
-
-      out += '\n';
-    }
-
-    throw new Error('SSA output mismatch:\n\n' + out + '\n' + actual);
-  }
-
   function test(name, input, expected, options) {
     it('should ' + name, function() {
       var ast = esprima.parse(
@@ -77,7 +19,7 @@ describe('SSA.js', function() {
 
       var out = ssa.construct(ast);
       var str = out.map(function(cfg) {
-        return ir.stringify(cfg.blocks);
+        return ir.stringify(cfg);
       }).join('\n----\n');
 
       var exp = expected.toString().replace(/^function.*{\/\*|\*\/}$/g, '');
@@ -384,10 +326,9 @@ describe('SSA.js', function() {
     block B0
       i1 = literal %1 # 3
       i3 = literal %"b" # 2
-      i5 = literal %"a" # 4
-      i6 = loadGlobal i5 # 4
-      i7 = storeProperty i6, i3, i1 # 2
-      i8 = ret i1 # 3
+      i5 = loadGlobal %"a" # 4
+      i6 = storeProperty i5, i3, i1 # 2
+      i7 = ret i1 # 3
   */});
 
   test('just double member assign', function() {
@@ -397,11 +338,10 @@ describe('SSA.js', function() {
       i1 = literal %1 # 3
       i3 = literal %"c" # 2
       i5 = literal %"b" # 4
-      i7 = literal %"a" # 5
-      i8 = loadGlobal i7 # 5
-      i9 = loadProperty i8, i5 # 4
-      i10 = storeProperty i9, i3, i1 # 2
-      i11 = ret i1 # 3
+      i7 = loadGlobal %"a" # 5
+      i8 = loadProperty i7, i5 # 4
+      i9 = storeProperty i8, i3, i1 # 2
+      i10 = ret i1 # 3
   */});
 
   test('just computed member assign', function() {
@@ -409,39 +349,34 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i1 = literal %1 # 3
-      i3 = literal %"b" # 4
-      i4 = loadGlobal i3 # 4
-      i6 = literal %"a" # 5
-      i7 = loadGlobal i6 # 5
-      i8 = storeProperty i7, i4, i1 # 2
-      i9 = ret i1 # 3
+      i3 = loadGlobal %"b" # 4
+      i5 = loadGlobal %"a" # 5
+      i6 = storeProperty i5, i3, i1 # 2
+      i7 = ret i1 # 3
   */});
 
   test('just logical expression', function() {
     a || b && c;
   }, function() {/*
     block B0 -> B1, B2
-      i1 = literal %"a" # 3
-      i2 = loadGlobal i1 # 3
-      i4 = branch i2 # 2
+      i1 = loadGlobal %"a" # 3
+      i3 = branch i1 # 2
     block B1 -> B3
-      i5 = to_phi i3, i2 # 2
+      i4 = to_phi i2, i1 # 2
     block B2 -> B4, B5
-      i7 = literal %"b" # 5
-      i8 = loadGlobal i7 # 5
-      i10 = branch i8 # 4
+      i6 = loadGlobal %"b" # 5
+      i8 = branch i6 # 4
     block B3
-      i3 = phi # 2
-      i17 = ret i3 # 2
+      i2 = phi # 2
+      i14 = ret i2 # 2
     block B4 -> B6
-      i13 = literal %"c" # 6
-      i14 = loadGlobal i13 # 6
-      i15 = to_phi i9, i14 # 4
+      i11 = loadGlobal %"c" # 6
+      i12 = to_phi i7, i11 # 4
     block B5 -> B6
-      i11 = to_phi i9, i8 # 4
+      i9 = to_phi i7, i6 # 4
     block B6 -> B3
-      i9 = phi # 4
-      i16 = to_phi i3, i9 # 2
+      i7 = phi # 4
+      i13 = to_phi i2, i7 # 2
   */});
 
   test('just postfix update expression', function() {
@@ -456,7 +391,6 @@ describe('SSA.js', function() {
       @i = binary %"+", i5, i8 # 4
       i11 = literal %undefined # 0
       i12 = ret i11 # 0
-
   */}, {
     global: false
   });
@@ -481,14 +415,13 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i1 = literal %"b" # 3
-      i3 = literal %"a" # 4
-      i4 = loadGlobal i3 # 4
-      i5 = loadProperty i4, i1 # 3
-      i6 = nop i5 # 2
-      i9 = literal %1 # 2
-      i10 = binary %"+", i6, i9 # 2
-      i11 = storeProperty i4, i1, i10 # 2
-      i12 = ret i6 # 2
+      i3 = loadGlobal %"a" # 4
+      i4 = loadProperty i3, i1 # 3
+      i5 = nop i4 # 2
+      i8 = literal %1 # 2
+      i9 = binary %"+", i5, i8 # 2
+      i10 = storeProperty i3, i1, i9 # 2
+      i11 = ret i5 # 2
   */});
 
   test('member prefix update expression', function() {
@@ -496,46 +429,43 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i1 = literal %"b" # 3
-      i3 = literal %"a" # 4
-      i4 = loadGlobal i3 # 4
-      i5 = loadProperty i4, i1 # 3
-      i7 = literal %1 # 2
-      i9 = binary %"+", i5, i7 # 2
-      i10 = storeProperty i4, i1, i9 # 2
-      i11 = ret i9 # 2
+      i3 = loadGlobal %"a" # 4
+      i4 = loadProperty i3, i1 # 3
+      i6 = literal %1 # 2
+      i8 = binary %"+", i4, i6 # 2
+      i9 = storeProperty i3, i1, i8 # 2
+      i10 = ret i8 # 2
   */});
 
   test('just new expression', function() {
     new Proto(1, 2, 3);
   }, function() {/*
     block B0
-      i1 = literal %"Proto" # 3
-      i2 = loadGlobal i1 # 3
-      i4 = literal %1 # 4
-      i6 = literal %2 # 5
-      i8 = literal %3 # 6
-      i9 = pushArg i8 # 2
-      i10 = pushArg i6 # 2
-      i11 = pushArg i4 # 2
-      i13 = new i2, %3 # 2
-      i14 = ret i13 # 2
+      i1 = loadGlobal %"Proto" # 3
+      i3 = literal %1 # 4
+      i5 = literal %2 # 5
+      i7 = literal %3 # 6
+      i8 = pushArg i7 # 2
+      i9 = pushArg i5 # 2
+      i10 = pushArg i3 # 2
+      i12 = new i1, %3 # 2
+      i13 = ret i12 # 2
   */});
 
   test('just call expression', function() {
     fn(1, 2, 3);
   }, function() {/*
     block B0
-      i1 = literal %"fn" # 3
-      i2 = loadGlobal i1 # 3
-      i4 = literal %1 # 4
-      i6 = literal %2 # 5
-      i8 = literal %3 # 6
-      i9 = pushArg i8 # 2
-      i10 = pushArg i6 # 2
-      i11 = pushArg i4 # 2
-      i12 = global # 2
-      i14 = call i2, i12, %3 # 2
-      i15 = ret i14 # 2
+      i1 = loadGlobal %"fn" # 3
+      i3 = literal %1 # 4
+      i5 = literal %2 # 5
+      i7 = literal %3 # 6
+      i8 = pushArg i7 # 2
+      i9 = pushArg i5 # 2
+      i10 = pushArg i3 # 2
+      i11 = global # 2
+      i13 = call i1, i11, %3 # 2
+      i14 = ret i13 # 2
   */});
 
   test('just unary operation', function() {
@@ -578,13 +508,10 @@ describe('SSA.js', function() {
     (a, b, c);
   }, function() {/*
     block B0
-      i1 = literal %"a" # 3
-      i2 = loadGlobal i1 # 3
-      i4 = literal %"b" # 4
-      i5 = loadGlobal i4 # 4
-      i7 = literal %"c" # 5
-      i8 = loadGlobal i7 # 5
-      i9 = ret i8 # 5
+      i1 = loadGlobal %"a" # 3
+      i3 = loadGlobal %"b" # 4
+      i5 = loadGlobal %"c" # 5
+      i6 = ret i5 # 5
   */});
 
   test('just array', function() {
@@ -613,10 +540,9 @@ describe('SSA.js', function() {
       i5 = literal %1 # 3
       i6 = storeProperty i1, i3, i5 # 2
       i8 = literal %2 # 2
-      i10 = literal %"x" # 4
-      i11 = loadGlobal i10 # 4
-      i12 = storeProperty i1, i8, i11 # 2
-      i13 = ret i1 # 2
+      i10 = loadGlobal %"x" # 4
+      i11 = storeProperty i1, i8, i10 # 2
+      i12 = ret i1 # 2
   */});
 
   test('empty block', function() {
@@ -630,20 +556,17 @@ describe('SSA.js', function() {
     a ? b : c;
   }, function() {/*
     block B0 -> B1, B2
-      i1 = literal %"a" # 3
-      i2 = loadGlobal i1 # 3
-      i4 = branch i2 # 2
+      i1 = loadGlobal %"a" # 3
+      i3 = branch i1 # 2
     block B1 -> B3
-      i6 = literal %"b" # 4
-      i7 = loadGlobal i6 # 4
-      i8 = to_phi i3, i7 # 2
+      i5 = loadGlobal %"b" # 4
+      i6 = to_phi i2, i5 # 2
     block B2 -> B3
-      i10 = literal %"c" # 5
-      i11 = loadGlobal i10 # 5
-      i12 = to_phi i3, i11 # 2
+      i8 = loadGlobal %"c" # 5
+      i9 = to_phi i2, i8 # 2
     block B3
-      i3 = phi # 2
-      i13 = ret i3 # 2
+      i2 = phi # 2
+      i10 = ret i2 # 2
   */});
 
   test('just a function declaration', function() {
@@ -656,19 +579,17 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i45 = fn %"B1" # 1
-      i47 = literal %"a" # 0
-      i48 = storeGlobal i47, i45 # 0
-      i50 = literal %"a" # 28
-      i51 = loadGlobal i50 # 28
-      i53 = literal %1 # 29
-      i55 = literal %2 # 30
-      i57 = literal %3 # 31
-      i58 = pushArg i57 # 27
-      i59 = pushArg i55 # 27
-      i60 = pushArg i53 # 27
-      i61 = global # 27
-      i63 = call i51, i61, %3 # 27
-      i64 = ret i63 # 27
+      i47 = storeGlobal %"a", i45 # 0
+      i49 = loadGlobal %"a" # 28
+      i51 = literal %1 # 29
+      i53 = literal %2 # 30
+      i55 = literal %3 # 31
+      i56 = pushArg i55 # 27
+      i57 = pushArg i53 # 27
+      i58 = pushArg i51 # 27
+      i59 = global # 27
+      i61 = call i49, i59, %3 # 27
+      i62 = ret i61 # 27
     ----
     block B1 -> B2, B3
       @b = loadArg %0 # 1
@@ -714,11 +635,10 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i1 = literal %"b" # 3
-      i3 = literal %"a" # 4
-      i4 = loadGlobal i3 # 4
-      i5 = loadProperty i4, i1 # 3
-      i7 = call i5, i4, %0 # 2
-      i8 = ret i7 # 2
+      i3 = loadGlobal %"a" # 4
+      i4 = loadProperty i3, i1 # 3
+      i6 = call i4, i3, %0 # 2
+      i7 = ret i6 # 2
   */});
 
   test('function with no return', function() {
@@ -728,10 +648,9 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i7 = fn %"B1" # 1
-      i9 = literal %"test" # 0
-      i10 = storeGlobal i9, i7 # 0
-      i12 = literal %undefined # 0
-      i13 = ret i12 # 0
+      i9 = storeGlobal %"test", i7 # 0
+      i11 = literal %undefined # 0
+      i12 = ret i11 # 0
     ----
     block B1
       @a = loadArg %0 # 1
@@ -750,13 +669,11 @@ describe('SSA.js', function() {
   }, function() {/*
     block B0
       i27 = fn %"B1" # 1
-      i29 = literal %"run" # 0
-      i30 = storeGlobal i29, i27 # 0
-      i32 = literal %"run" # 22
-      i33 = loadGlobal i32 # 22
-      i34 = global # 21
-      i36 = call i33, i34, %0 # 21
-      i37 = ret i36 # 21
+      i29 = storeGlobal %"run", i27 # 0
+      i31 = loadGlobal %"run" # 22
+      i32 = global # 21
+      i34 = call i31, i32, %0 # 21
+      i35 = ret i34 # 21
     ----
     block B1 -> B4
       @x = literal %undefined # 1

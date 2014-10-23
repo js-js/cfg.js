@@ -21,7 +21,11 @@
   },
   "homepage": "https://github.com/indutny/ssa.js",
   "devDependencies": {
+    "escodegen": "^1.4.1",
     "esprima": "~1.2.2",
     "ssa-ir": "~0.3.0"
+  },
+  "dependencies": {
+    "tarjan": "^0.5.2"
   }
 }
