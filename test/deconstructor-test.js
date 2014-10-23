@@ -209,4 +209,24 @@ describe('SSA.js/Deconstructor', function() {
     b + 3;
     b + 4;
   });
+
+  return;
+  test('simple while loop', function() {/*
+    block B0 -> B3
+      @i = literal %undefined # 0
+      @i = literal %0 # 2
+    block B1 -> B3
+    block B2 -> B6
+    block B3 -> B4
+    block B4 -> B5, B2
+      i6 = literal %42 # 6
+      i8 = binary %"<", @i, i6 # 4
+      i9 = branch i8 # 3
+    block B5 -> B1
+      i12 = literal %1 # 10
+      @i = binary %"+", @i, i12 # 8
+    block B6
+      i18 = ret @i # 0
+  */}, function() {
+  });
 });
