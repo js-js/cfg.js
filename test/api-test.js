@@ -3,7 +3,7 @@ var esprima = require('esprima');
 var ir = require('ssa-ir');
 var ssa = require('../');
 
-describe('SSA.js/Constructor', function() {
+describe('SSA.js', function() {
   function strip(source) {
     var lines = source.split(/\r\n|\r|\n/g);
 
@@ -76,7 +76,9 @@ describe('SSA.js/Constructor', function() {
         ast.type = 'Brogram';
 
       var out = ssa.construct(ast);
-      var str = ir.stringify(out);
+      var str = out.map(function(cfg) {
+        return ir.stringify(cfg.blocks);
+      }).join('\n----\n');
 
       var exp = expected.toString().replace(/^function.*{\/\*|\*\/}$/g, '');
       equalLines(strip(str), strip(exp));
@@ -89,13 +91,12 @@ describe('SSA.js/Constructor', function() {
     a;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
       @a = literal %undefined # 0
       @a = literal %1 # 2
-      i7 = literal %2 # 6
-      @a = binary %"+", @a, i7 # 4
-      i12 = literal %undefined # 0
-      i13 = ret i12 # 0
+      i6 = literal %2 # 6
+      @a = binary %"+", @a, i6 # 4
+      i11 = literal %undefined # 0
+      i12 = ret i11 # 0
   */}, {
     global: false
   });
@@ -111,18 +112,17 @@ describe('SSA.js/Constructor', function() {
     b;
   }, function() {/*
     block B0 -> B1, B2
-      i0 = __ssa_root__ # 0
       @a = literal %undefined # 0
       @b = literal %undefined # 0
       @a = literal %1 # 2
-      i8 = branch @a # 4
+      i7 = branch @a # 4
     block B1 -> B3
       @b = literal %1 # 9
     block B2 -> B3
       @b = literal %2 # 13
     block B3
-      i15 = literal %undefined # 0
-      i16 = ret i15 # 0
+      i14 = literal %undefined # 0
+      i15 = ret i14 # 0
   */}, {
     global: false
   });
@@ -137,18 +137,17 @@ describe('SSA.js/Constructor', function() {
     b;
   }, function() {/*
     block B0 -> B1, B2
-      i0 = __ssa_root__ # 0
       @a = literal %undefined # 0
       @b = literal %undefined # 0
       @a = literal %1 # 2
-      i8 = branch @a # 3
+      i7 = branch @a # 3
     block B1 -> B3
       @b = literal %1 # 7
     block B2 -> B3
       @b = literal %2 # 10
     block B3
-      i15 = literal %undefined # 0
-      i16 = ret i15 # 0
+      i14 = literal %undefined # 0
+      i15 = ret i14 # 0
   */}, {
     global: false
   });
@@ -166,27 +165,26 @@ describe('SSA.js/Constructor', function() {
     x();
   }, function() {/*
     block B0 -> B2, B3
-      i0 = __ssa_root__ # 0
       @a = literal %undefined # 0
       @b = literal %undefined # 0
       @x = fn %"B1" # 1
       @a = literal %1 # 6
-      i15 = branch @a # 7
+      i13 = branch @a # 7
     block B2 -> B4
-      i17 = literal %1 # 11
-      i20 = storeContext %0, %0, i17 # 10
+      i15 = literal %1 # 11
+      i18 = storeContext %0, %0, i15 # 10
     block B3 -> B4
-      i22 = literal %2 # 14
-      i25 = storeContext %0, %0, i22 # 13
+      i20 = literal %2 # 14
+      i23 = storeContext %0, %0, i20 # 13
     block B4
-      i27 = global # 17
-      i29 = call @x, i27, %0 # 17
-      i31 = literal %undefined # 0
-      i32 = ret i31 # 0
+      i25 = global # 17
+      i27 = call @x, i25, %0 # 17
+      i29 = literal %undefined # 0
+      i30 = ret i29 # 0
+    ----
     block B1
-      i5 = __ssa_root__ # 1
-      i8 = loadContext %1, %0 # 4
-      i9 = ret i8 # 3
+      i6 = loadContext %1, %0 # 4
+      i7 = ret i6 # 3
   */}, {
     global: false
   });
@@ -198,22 +196,21 @@ describe('SSA.js/Constructor', function() {
     i;
   }, function() {/*
     block B0 -> B3
-      i0 = __ssa_root__ # 0
       @i = literal %undefined # 0
       @i = literal %0 # 2
     block B1 -> B3
     block B2 -> B6
     block B3 -> B4
     block B4 -> B5, B2
-      i7 = literal %42 # 6
-      i9 = binary %"<", @i, i7 # 4
-      i10 = branch i9 # 3
+      i6 = literal %42 # 6
+      i8 = binary %"<", @i, i6 # 4
+      i9 = branch i8 # 3
     block B5 -> B1
-      i13 = literal %1 # 10
-      @i = binary %"+", @i, i13 # 8
+      i12 = literal %1 # 10
+      @i = binary %"+", @i, i12 # 8
     block B6
-      i18 = literal %undefined # 0
-      i19 = ret i18 # 0
+      i17 = literal %undefined # 0
+      i18 = ret i17 # 0
   */}, {
     global: false
   });
@@ -226,22 +223,21 @@ describe('SSA.js/Constructor', function() {
     i;
   }, function() {/*
     block B0 -> B3
-      i0 = __ssa_root__ # 0
       @i = literal %undefined # 0
       @i = literal %0 # 2
     block B1 -> B3
     block B2 -> B6
     block B3 -> B5
     block B4 -> B5, B2
-      i7 = literal %42 # 6
-      i9 = binary %"<", @i, i7 # 4
-      i10 = branch i9 # 3
+      i6 = literal %42 # 6
+      i8 = binary %"<", @i, i6 # 4
+      i9 = branch i8 # 3
     block B5 -> B1
-      i13 = literal %1 # 10
-      @i = binary %"+", @i, i13 # 8
+      i12 = literal %1 # 10
+      @i = binary %"+", @i, i12 # 8
     block B6
-      i18 = literal %undefined # 0
-      i19 = ret i18 # 0
+      i17 = literal %undefined # 0
+      i18 = ret i17 # 0
   */}, {
     global: false
   });
@@ -258,7 +254,6 @@ describe('SSA.js/Constructor', function() {
     i;
   }, function() {/*
     block B0 -> B3
-      i0 = __ssa_root__ # 0
       @i = literal %undefined # 0
       @j = literal %undefined # 0
       @i = literal %0 # 2
@@ -266,27 +261,27 @@ describe('SSA.js/Constructor', function() {
     block B2 -> B12
     block B3 -> B4
     block B4 -> B5, B2
-      i9 = literal %42 # 6
-      i11 = binary %"<", @i, i9 # 4
-      i12 = branch i11 # 3
+      i8 = literal %42 # 6
+      i10 = binary %"<", @i, i8 # 4
+      i11 = branch i10 # 3
     block B5 -> B8
       @j = literal %0 # 9
     block B6 -> B8
     block B7 -> B11
     block B8 -> B9
     block B9 -> B10, B7
-      i17 = literal %42 # 13
-      i19 = binary %"<", @j, i17 # 11
-      i20 = branch i19 # 10
+      i16 = literal %42 # 13
+      i18 = binary %"<", @j, i16 # 11
+      i19 = branch i18 # 10
     block B10 -> B6
-      i23 = literal %1 # 18
-      @i = binary %"+", @i, i23 # 16
-      i28 = literal %1 # 22
-      @j = binary %"+", @j, i28 # 20
+      i22 = literal %1 # 18
+      @i = binary %"+", @i, i22 # 16
+      i27 = literal %1 # 22
+      @j = binary %"+", @j, i27 # 20
     block B11 -> B1
     block B12
-      i33 = literal %undefined # 0
-      i34 = ret i33 # 0
+      i32 = literal %undefined # 0
+      i33 = ret i32 # 0
   */}, {
     global: false
   });
@@ -303,36 +298,35 @@ describe('SSA.js/Constructor', function() {
     i;
   }, function() {/*
     block B0 -> B3
-      i0 = __ssa_root__ # 0
       @i = literal %undefined # 0
       @i = literal %0 # 2
     block B1 -> B9
     block B2 -> B13
     block B3 -> B4
     block B4 -> B5, B2
-      i7 = literal %42 # 6
-      i9 = binary %"<", @i, i7 # 4
-      i10 = branch i9 # 3
+      i6 = literal %42 # 6
+      i8 = binary %"<", @i, i6 # 4
+      i9 = branch i8 # 3
     block B5 -> B6, B7
-      i13 = literal %1 # 11
-      @i = binary %"+", @i, i13 # 9
-      i18 = literal %21 # 15
-      i20 = binary %"<", @i, i18 # 13
-      i21 = branch i20 # 12
+      i12 = literal %1 # 11
+      @i = binary %"+", @i, i12 # 9
+      i17 = literal %21 # 15
+      i19 = binary %"<", @i, i17 # 13
+      i20 = branch i19 # 12
     block B6 -> B9
     block B7 -> B8
     block B8 -> B10, B11
-      i24 = literal %40 # 20
-      i26 = binary %">", @i, i24 # 18
-      i27 = branch i26 # 17
+      i23 = literal %40 # 20
+      i25 = binary %">", @i, i23 # 18
+      i26 = branch i25 # 17
     block B9 -> B3
     block B10 -> B13
     block B11 -> B12
     block B12 -> B1
     block B13 -> B14
     block B14
-      i30 = literal %undefined # 0
-      i31 = ret i30 # 0
+      i29 = literal %undefined # 0
+      i30 = ret i29 # 0
   */}, {
     global: false
   });
@@ -345,26 +339,25 @@ describe('SSA.js/Constructor', function() {
     j;
   }, function() {/*
     block B0 -> B3
-      i0 = __ssa_root__ # 0
       @j = literal %undefined # 0
       @i = literal %undefined # 0
       @j = literal %1 # 2
       @i = literal %0 # 5
     block B1 -> B3
-      i22 = literal %1 # 17
-      @i = binary %"+", @i, i22 # 15
+      i21 = literal %1 # 17
+      @i = binary %"+", @i, i21 # 15
     block B2 -> B6
     block B3 -> B4
     block B4 -> B5, B2
-      i11 = literal %42 # 8
-      i13 = binary %"<", @i, i11 # 6
-      i14 = branch i13 # 3
+      i10 = literal %42 # 8
+      i12 = binary %"<", @i, i10 # 6
+      i13 = branch i12 # 3
     block B5 -> B1
-      i17 = literal %2 # 14
-      @j = binary %"*", @j, i17 # 12
+      i16 = literal %2 # 14
+      @j = binary %"*", @j, i16 # 12
     block B6
-      i27 = literal %undefined # 0
-      i28 = ret i27 # 0
+      i26 = literal %undefined # 0
+      i27 = ret i26 # 0
   */}, {
     global: false
   });
@@ -373,87 +366,82 @@ describe('SSA.js/Constructor', function() {
     for (;;);
   }, function() {/*
     block B0 -> B3
-      i0 = __ssa_root__ # 0
     block B1 -> B3
     block B2 -> B6
     block B3 -> B4
     block B4 -> B5, B2
-      i2 = literal %true # 1
-      i3 = branch i2 # 1
+      i1 = literal %true # 1
+      i2 = branch i1 # 1
     block B5 -> B1
     block B6
-      i5 = literal %undefined # 0
-      i6 = ret i5 # 0
+      i4 = literal %undefined # 0
+      i5 = ret i4 # 0
   */});
 
   test('just member assign', function() {
     a.b = 1;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %1 # 3
-      i4 = literal %"b" # 2
-      i6 = literal %"a" # 4
-      i7 = loadGlobal i6 # 4
-      i8 = storeProperty i7, i4, i2 # 2
-      i9 = ret i2 # 3
+      i1 = literal %1 # 3
+      i3 = literal %"b" # 2
+      i5 = literal %"a" # 4
+      i6 = loadGlobal i5 # 4
+      i7 = storeProperty i6, i3, i1 # 2
+      i8 = ret i1 # 3
   */});
 
   test('just double member assign', function() {
     a.b.c = 1;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %1 # 3
-      i4 = literal %"c" # 2
-      i6 = literal %"b" # 4
-      i8 = literal %"a" # 5
-      i9 = loadGlobal i8 # 5
-      i10 = loadProperty i9, i6 # 4
-      i11 = storeProperty i10, i4, i2 # 2
-      i12 = ret i2 # 3
+      i1 = literal %1 # 3
+      i3 = literal %"c" # 2
+      i5 = literal %"b" # 4
+      i7 = literal %"a" # 5
+      i8 = loadGlobal i7 # 5
+      i9 = loadProperty i8, i5 # 4
+      i10 = storeProperty i9, i3, i1 # 2
+      i11 = ret i1 # 3
   */});
 
   test('just computed member assign', function() {
     a[b] = 1;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %1 # 3
-      i4 = literal %"b" # 4
-      i5 = loadGlobal i4 # 4
-      i7 = literal %"a" # 5
-      i8 = loadGlobal i7 # 5
-      i9 = storeProperty i8, i5, i2 # 2
-      i10 = ret i2 # 3
+      i1 = literal %1 # 3
+      i3 = literal %"b" # 4
+      i4 = loadGlobal i3 # 4
+      i6 = literal %"a" # 5
+      i7 = loadGlobal i6 # 5
+      i8 = storeProperty i7, i4, i1 # 2
+      i9 = ret i1 # 3
   */});
 
   test('just logical expression', function() {
     a || b && c;
   }, function() {/*
     block B0 -> B1, B2
-      i0 = __ssa_root__ # 0
-      i2 = literal %"a" # 3
-      i3 = loadGlobal i2 # 3
-      i5 = branch i3 # 2
+      i1 = literal %"a" # 3
+      i2 = loadGlobal i1 # 3
+      i4 = branch i2 # 2
     block B1 -> B3
-      i6 = to_phi i4, i3 # 2
+      i5 = to_phi i3, i2 # 2
     block B2 -> B4, B5
-      i8 = literal %"b" # 5
-      i9 = loadGlobal i8 # 5
-      i11 = branch i9 # 4
+      i7 = literal %"b" # 5
+      i8 = loadGlobal i7 # 5
+      i10 = branch i8 # 4
     block B3
-      i4 = phi # 2
-      i18 = ret i4 # 2
+      i3 = phi # 2
+      i17 = ret i3 # 2
     block B4 -> B6
-      i14 = literal %"c" # 6
-      i15 = loadGlobal i14 # 6
-      i16 = to_phi i10, i15 # 4
+      i13 = literal %"c" # 6
+      i14 = loadGlobal i13 # 6
+      i15 = to_phi i9, i14 # 4
     block B5 -> B6
-      i12 = to_phi i10, i9 # 4
+      i11 = to_phi i9, i8 # 4
     block B6 -> B3
-      i10 = phi # 4
-      i17 = to_phi i4, i10 # 2
+      i9 = phi # 4
+      i16 = to_phi i3, i9 # 2
   */});
 
   test('just postfix update expression', function() {
@@ -461,14 +449,14 @@ describe('SSA.js/Constructor', function() {
     i++;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
       @i = literal %undefined # 0
       @i = literal %0 # 2
-      i6 = nop @i # 4
-      i9 = literal %1 # 4
-      @i = binary %"+", i6, i9 # 4
-      i12 = literal %undefined # 0
-      i13 = ret i12 # 0
+      i5 = nop @i # 4
+      i8 = literal %1 # 4
+      @i = binary %"+", i5, i8 # 4
+      i11 = literal %undefined # 0
+      i12 = ret i11 # 0
+
   */}, {
     global: false
   });
@@ -478,13 +466,12 @@ describe('SSA.js/Constructor', function() {
     ++i;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
       @i = literal %undefined # 0
       @i = literal %0 # 2
-      i7 = literal %1 # 4
-      @i = binary %"+", @i, i7 # 4
-      i11 = literal %undefined # 0
-      i12 = ret i11 # 0
+      i6 = literal %1 # 4
+      @i = binary %"+", @i, i6 # 4
+      i10 = literal %undefined # 0
+      i11 = ret i10 # 0
   */}, {
     global: false
   });
@@ -493,66 +480,62 @@ describe('SSA.js/Constructor', function() {
     a.b++;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %"b" # 3
-      i4 = literal %"a" # 4
-      i5 = loadGlobal i4 # 4
-      i6 = loadProperty i5, i2 # 3
-      i7 = nop i6 # 2
-      i10 = literal %1 # 2
-      i11 = binary %"+", i7, i10 # 2
-      i12 = storeProperty i5, i2, i11 # 2
-      i13 = ret i7 # 2
+      i1 = literal %"b" # 3
+      i3 = literal %"a" # 4
+      i4 = loadGlobal i3 # 4
+      i5 = loadProperty i4, i1 # 3
+      i6 = nop i5 # 2
+      i9 = literal %1 # 2
+      i10 = binary %"+", i6, i9 # 2
+      i11 = storeProperty i4, i1, i10 # 2
+      i12 = ret i6 # 2
   */});
 
   test('member prefix update expression', function() {
     ++a.b;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %"b" # 3
-      i4 = literal %"a" # 4
-      i5 = loadGlobal i4 # 4
-      i6 = loadProperty i5, i2 # 3
-      i8 = literal %1 # 2
-      i10 = binary %"+", i6, i8 # 2
-      i11 = storeProperty i5, i2, i10 # 2
-      i12 = ret i10 # 2
+      i1 = literal %"b" # 3
+      i3 = literal %"a" # 4
+      i4 = loadGlobal i3 # 4
+      i5 = loadProperty i4, i1 # 3
+      i7 = literal %1 # 2
+      i9 = binary %"+", i5, i7 # 2
+      i10 = storeProperty i4, i1, i9 # 2
+      i11 = ret i9 # 2
   */});
 
   test('just new expression', function() {
     new Proto(1, 2, 3);
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %"Proto" # 3
-      i3 = loadGlobal i2 # 3
-      i5 = literal %1 # 4
-      i7 = literal %2 # 5
-      i9 = literal %3 # 6
-      i10 = pushArg i9 # 2
-      i11 = pushArg i7 # 2
-      i12 = pushArg i5 # 2
-      i14 = new i3, %3 # 2
-      i15 = ret i14 # 2
+      i1 = literal %"Proto" # 3
+      i2 = loadGlobal i1 # 3
+      i4 = literal %1 # 4
+      i6 = literal %2 # 5
+      i8 = literal %3 # 6
+      i9 = pushArg i8 # 2
+      i10 = pushArg i6 # 2
+      i11 = pushArg i4 # 2
+      i13 = new i2, %3 # 2
+      i14 = ret i13 # 2
   */});
 
   test('just call expression', function() {
     fn(1, 2, 3);
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %"fn" # 3
-      i3 = loadGlobal i2 # 3
-      i5 = literal %1 # 4
-      i7 = literal %2 # 5
-      i9 = literal %3 # 6
-      i10 = pushArg i9 # 2
-      i11 = pushArg i7 # 2
-      i12 = pushArg i5 # 2
-      i13 = global # 2
-      i15 = call i3, i13, %3 # 2
-      i16 = ret i15 # 2
+      i1 = literal %"fn" # 3
+      i2 = loadGlobal i1 # 3
+      i4 = literal %1 # 4
+      i6 = literal %2 # 5
+      i8 = literal %3 # 6
+      i9 = pushArg i8 # 2
+      i10 = pushArg i6 # 2
+      i11 = pushArg i4 # 2
+      i12 = global # 2
+      i14 = call i2, i12, %3 # 2
+      i15 = ret i14 # 2
   */});
 
   test('just unary operation', function() {
@@ -560,12 +543,11 @@ describe('SSA.js/Constructor', function() {
     -i;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
       @i = literal %undefined # 0
       @i = literal %0 # 2
-      i7 = unary %"-", @i # 4
-      i9 = literal %undefined # 0
-      i10 = ret i9 # 0
+      i6 = unary %"-", @i # 4
+      i8 = literal %undefined # 0
+      i9 = ret i8 # 0
   */}, {
     global: false
   });
@@ -574,9 +556,8 @@ describe('SSA.js/Constructor', function() {
     delete a;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = deleteGlobal %"a" # 2
-      i3 = ret i2 # 2
+      i1 = deleteGlobal %"a" # 2
+      i2 = ret i1 # 2
   */});
 
   test('member delete', function() {
@@ -584,12 +565,11 @@ describe('SSA.js/Constructor', function() {
     delete a.b;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
       @a = literal %undefined # 0
-      i4 = literal %"b" # 3
-      i6 = deleteProperty @a, i4 # 3
-      i8 = literal %undefined # 0
-      i9 = ret i8 # 0
+      i3 = literal %"b" # 3
+      i5 = deleteProperty @a, i3 # 3
+      i7 = literal %undefined # 0
+      i8 = ret i7 # 0
   */}, {
     global: false
   });
@@ -598,77 +578,72 @@ describe('SSA.js/Constructor', function() {
     (a, b, c);
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %"a" # 3
-      i3 = loadGlobal i2 # 3
-      i5 = literal %"b" # 4
-      i6 = loadGlobal i5 # 4
-      i8 = literal %"c" # 5
-      i9 = loadGlobal i8 # 5
-      i10 = ret i9 # 5
+      i1 = literal %"a" # 3
+      i2 = loadGlobal i1 # 3
+      i4 = literal %"b" # 4
+      i5 = loadGlobal i4 # 4
+      i7 = literal %"c" # 5
+      i8 = loadGlobal i7 # 5
+      i9 = ret i8 # 5
   */});
 
   test('just array', function() {
     [1, 2, 3];
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = array %3 # 2
-      i4 = literal %1 # 3
-      i6 = literal %0 # 2
-      i7 = storeProperty i2, i6, i4 # 2
-      i9 = literal %2 # 4
-      i11 = literal %1 # 2
-      i12 = storeProperty i2, i11, i9 # 2
-      i14 = literal %3 # 5
-      i16 = literal %2 # 2
-      i17 = storeProperty i2, i16, i14 # 2
-      i18 = ret i2 # 2
+      i1 = array %3 # 2
+      i3 = literal %1 # 3
+      i5 = literal %0 # 2
+      i6 = storeProperty i1, i5, i3 # 2
+      i8 = literal %2 # 4
+      i10 = literal %1 # 2
+      i11 = storeProperty i1, i10, i8 # 2
+      i13 = literal %3 # 5
+      i15 = literal %2 # 2
+      i16 = storeProperty i1, i15, i13 # 2
+      i17 = ret i1 # 2
   */});
 
   test('just object', function() {
     ({ a: 1, 2: x });
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = object %2 # 2
-      i4 = literal %"a" # 2
-      i6 = literal %1 # 3
-      i7 = storeProperty i2, i4, i6 # 2
-      i9 = literal %2 # 2
-      i11 = literal %"x" # 4
-      i12 = loadGlobal i11 # 4
-      i13 = storeProperty i2, i9, i12 # 2
-      i14 = ret i2 # 2
+      i1 = object %2 # 2
+      i3 = literal %"a" # 2
+      i5 = literal %1 # 3
+      i6 = storeProperty i1, i3, i5 # 2
+      i8 = literal %2 # 2
+      i10 = literal %"x" # 4
+      i11 = loadGlobal i10 # 4
+      i12 = storeProperty i1, i8, i11 # 2
+      i13 = ret i1 # 2
   */});
 
   test('empty block', function() {
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %undefined # 0
-      i3 = ret i2 # 0
+      i1 = literal %undefined # 0
+      i2 = ret i1 # 0
   */});
 
   test('just a conditional expression', function() {
     a ? b : c;
   }, function() {/*
     block B0 -> B1, B2
-      i0 = __ssa_root__ # 0
-      i2 = literal %"a" # 3
-      i3 = loadGlobal i2 # 3
-      i5 = branch i3 # 2
+      i1 = literal %"a" # 3
+      i2 = loadGlobal i1 # 3
+      i4 = branch i2 # 2
     block B1 -> B3
-      i7 = literal %"b" # 4
-      i8 = loadGlobal i7 # 4
-      i9 = to_phi i4, i8 # 2
+      i6 = literal %"b" # 4
+      i7 = loadGlobal i6 # 4
+      i8 = to_phi i3, i7 # 2
     block B2 -> B3
-      i11 = literal %"c" # 5
-      i12 = loadGlobal i11 # 5
-      i13 = to_phi i4, i12 # 2
+      i10 = literal %"c" # 5
+      i11 = loadGlobal i10 # 5
+      i12 = to_phi i3, i11 # 2
     block B3
-      i4 = phi # 2
-      i14 = ret i4 # 2
+      i3 = phi # 2
+      i13 = ret i3 # 2
   */});
 
   test('just a function declaration', function() {
@@ -680,73 +655,70 @@ describe('SSA.js/Constructor', function() {
     a(1, 2, 3);
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i47 = fn %"B1" # 1
-      i49 = literal %"a" # 0
-      i50 = storeGlobal i49, i47 # 0
-      i52 = literal %"a" # 28
-      i53 = loadGlobal i52 # 28
-      i55 = literal %1 # 29
-      i57 = literal %2 # 30
-      i59 = literal %3 # 31
-      i60 = pushArg i59 # 27
-      i61 = pushArg i57 # 27
-      i62 = pushArg i55 # 27
-      i63 = global # 27
-      i65 = call i53, i63, %3 # 27
-      i66 = ret i65 # 27
+      i45 = fn %"B1" # 1
+      i47 = literal %"a" # 0
+      i48 = storeGlobal i47, i45 # 0
+      i50 = literal %"a" # 28
+      i51 = loadGlobal i50 # 28
+      i53 = literal %1 # 29
+      i55 = literal %2 # 30
+      i57 = literal %3 # 31
+      i58 = pushArg i57 # 27
+      i59 = pushArg i55 # 27
+      i60 = pushArg i53 # 27
+      i61 = global # 27
+      i63 = call i51, i61, %3 # 27
+      i64 = ret i63 # 27
+    ----
     block B1 -> B2, B3
-      i1 = __ssa_root__ # 1
       @b = loadArg %0 # 1
       @c = loadArg %1 # 1
       @d = loadArg %2 # 1
-      i8 = self # 6
-      i10 = literal %0 # 7
-      i12 = literal %0 # 8
-      i14 = literal %0 # 9
-      i15 = pushArg i14 # 5
-      i16 = pushArg i12 # 5
-      i17 = pushArg i10 # 5
-      i18 = global # 5
-      i20 = call i8, i18, %3 # 5
-      i22 = literal %0 # 10
-      i24 = binary %"<", i20, i22 # 4
-      i25 = branch i24 # 3
+      i6 = self # 6
+      i8 = literal %0 # 7
+      i10 = literal %0 # 8
+      i12 = literal %0 # 9
+      i13 = pushArg i12 # 5
+      i14 = pushArg i10 # 5
+      i15 = pushArg i8 # 5
+      i16 = global # 5
+      i18 = call i6, i16, %3 # 5
+      i20 = literal %0 # 10
+      i22 = binary %"<", i18, i20 # 4
+      i23 = branch i22 # 3
     block B2
-      i27 = literal %0 # 15
-      i30 = binary %"-", i27, @b # 14
-      i33 = binary %"-", i30, @c # 13
-      i36 = binary %"-", i33, @d # 12
-      i37 = ret i36 # 11
+      i25 = literal %0 # 15
+      i28 = binary %"-", i25, @b # 14
+      i31 = binary %"-", i28, @c # 13
+      i34 = binary %"-", i31, @d # 12
+      i35 = ret i34 # 11
     block B3 -> B4
     block B4
-      i41 = binary %"+", @b, @c # 21
-      i44 = binary %"+", i41, @d # 20
-      i45 = ret i44 # 19
+      i39 = binary %"+", @b, @c # 21
+      i42 = binary %"+", i39, @d # 20
+      i43 = ret i42 # 19
   */});
 
   test('just a this expression', function() {
     this.a;
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %"a" # 2
-      i3 = this # 3
-      i4 = loadProperty i3, i2 # 2
-      i5 = ret i4 # 2
+      i1 = literal %"a" # 2
+      i2 = this # 3
+      i3 = loadProperty i2, i1 # 2
+      i4 = ret i3 # 2
   */});
 
   test('call with context', function() {
     a.b();
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i2 = literal %"b" # 3
-      i4 = literal %"a" # 4
-      i5 = loadGlobal i4 # 4
-      i6 = loadProperty i5, i2 # 3
-      i8 = call i6, i5, %0 # 2
-      i9 = ret i8 # 2
+      i1 = literal %"b" # 3
+      i3 = literal %"a" # 4
+      i4 = loadGlobal i3 # 4
+      i5 = loadProperty i4, i1 # 3
+      i7 = call i5, i4, %0 # 2
+      i8 = ret i7 # 2
   */});
 
   test('function with no return', function() {
@@ -755,17 +727,16 @@ describe('SSA.js/Constructor', function() {
     }
   }, function() {/*
     block B0
-    i0 = __ssa_root__ # 0
-    i9 = fn %"B1" # 1
-    i11 = literal %"test" # 0
-    i12 = storeGlobal i11, i9 # 0
-    i14 = literal %undefined # 0
-    i15 = ret i14 # 0
+      i7 = fn %"B1" # 1
+      i9 = literal %"test" # 0
+      i10 = storeGlobal i9, i7 # 0
+      i12 = literal %undefined # 0
+      i13 = ret i12 # 0
+    ----
     block B1
-    i1 = __ssa_root__ # 1
-    @a = loadArg %0 # 1
-    i6 = literal %undefined # 1
-    i7 = ret i6 # 1
+      @a = loadArg %0 # 1
+      i4 = literal %undefined # 1
+      i5 = ret i4 # 1
   */});
 
   test('function boundary regression', function() {
@@ -778,34 +749,33 @@ describe('SSA.js/Constructor', function() {
     run();
   }, function() {/*
     block B0
-      i0 = __ssa_root__ # 0
-      i29 = fn %"B1" # 1
-      i31 = literal %"run" # 0
-      i32 = storeGlobal i31, i29 # 0
-      i34 = literal %"run" # 22
-      i35 = loadGlobal i34 # 22
-      i36 = global # 21
-      i38 = call i35, i36, %0 # 21
-      i39 = ret i38 # 21
+      i27 = fn %"B1" # 1
+      i29 = literal %"run" # 0
+      i30 = storeGlobal i29, i27 # 0
+      i32 = literal %"run" # 22
+      i33 = loadGlobal i32 # 22
+      i34 = global # 21
+      i36 = call i33, i34, %0 # 21
+      i37 = ret i36 # 21
+    ----
     block B1 -> B4
-      i1 = __ssa_root__ # 1
       @x = literal %undefined # 1
       @i = literal %undefined # 1
       @x = literal %1 # 4
       @i = literal %0 # 7
     block B2 -> B4
-      i21 = nop @i # 15
-      i24 = literal %1 # 15
-      @i = binary %"+", i21, i24 # 15
+      i19 = nop @i # 15
+      i22 = literal %1 # 15
+      @i = binary %"+", i19, i22 # 15
     block B3 -> B7
     block B4 -> B5
     block B5 -> B6, B3
-      i12 = literal %10 # 10
-      i14 = binary %"<", @i, i12 # 8
-      i15 = branch i14 # 5
+      i10 = literal %10 # 10
+      i12 = binary %"<", @i, i10 # 8
+      i13 = branch i12 # 5
     block B6 -> B2
       @x = binary %"+", @x, @i # 12
     block B7
-      i27 = ret @x # 17
+      i25 = ret @x # 17
   */});
 });
