@@ -76,7 +76,7 @@ describe('SSA.js', function() {
     } else {
       var b = 2;
     }
-    b;
+    ret(b);
   }, function() {/*
     block B0 -> B1, B2
       @a = literal %undefined # 0
@@ -88,8 +88,12 @@ describe('SSA.js', function() {
     block B2 -> B3
       @b = literal %2 # 10
     block B3
-      i14 = literal %undefined # 0
-      i15 = ret i14 # 0
+      i13 = loadGlobal %"ret" # 13
+      i15 = pushArg @b # 12
+      i16 = global # 12
+      i18 = call i13, i16, %1 # 12
+      i20 = literal %undefined # 0
+      i21 = ret i20 # 0
   */}, {
     global: false
   });

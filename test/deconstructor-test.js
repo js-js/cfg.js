@@ -106,4 +106,52 @@ describe('SSA.js/Deconstructor', function() {
   */}, function() {
     a.b.call(c);
   });
+
+  test('storeGlobal', function() {/*
+    block B0
+      i1 = literal %"b" # 3
+      i3 = storeGlobal %"a", i1
+  */}, function() {
+    a = 'b';
+  });
+
+  test('storeProperty', function() {/*
+    block B0
+      i1 = literal %"b" # 3
+      i2 = loadGlobal %"obj"
+      i3 = literal %"a"
+      i4 = storeProperty i2, i3, i1
+  */}, function() {
+    obj.a = 'b';
+  });
+
+  test('assignment', function() {/*
+    block B0
+      @a = literal %"b" # 3
+  */}, function() {
+    a = 'b';
+  });
+
+  test('variables', function() {/*
+    block B0
+      i6 = call @fn, @obj, %0 # 2
+      i7 = ret i6 # 2
+  */}, function() {
+    fn.call(obj);
+  });
+
+  test('if/else', function() {/*
+    block B0 -> B1, B2
+      @a = literal %undefined # 0
+      @b = literal %undefined # 0
+      @a = literal %1 # 2
+      i7 = branch @a # 4
+    block B1 -> B3
+      @b = literal %1 # 9
+    block B2 -> B3
+      @b = literal %2 # 13
+    block B3
+      i15 = ret @b # 0
+  */}, function() {
+  });
 });
