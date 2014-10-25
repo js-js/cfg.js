@@ -609,6 +609,22 @@ describe('SSA.js', function() {
       i10 = ret i2 # 2
   */});
 
+  test('just an anonymous function expression', function() {
+    (function() {
+      return 1;
+    })()
+  }, function() {/*
+    block B0
+      i4 = fn %"B1" # 3
+      i5 = global # 2
+      i7 = call i4, i5, %0 # 2
+      i8 = ret i7 # 2
+    ----
+    block B1
+      i1 = literal %1 # 6
+      i2 = ret i1 # 5
+  */});
+
   test('just a function declaration', function() {
     function a(b, c, d) {
       if (a(0, 0, 0) < 0)
