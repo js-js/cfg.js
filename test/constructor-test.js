@@ -441,6 +441,42 @@ describe('SSA.js', function() {
       i10 = ret i8 # 2
   */});
 
+  test('just postfix global update expression', function() {
+    i++;
+  }, function() {/*
+    block B0
+      i1 = loadGlobal %"i" # 3
+      i2 = nop i1 # 2
+      i5 = literal %1 # 2
+      i6 = binary %"+", i2, i5 # 2
+      i8 = storeGlobal %"i", i6 # 2
+      i9 = ret i2 # 2
+  */});
+
+  test('just postfix context update expression', function() {
+    var i;
+    function test() {
+      i++;
+    }
+  }, function() {/*
+    block B0
+      @i = literal %undefined # 0
+      @test = fn %"B1" # 1
+      i19 = literal %undefined # 0
+      i20 = ret i19 # 0
+    ----
+    block B1
+      i4 = loadContext %1, %0 # 5
+      i5 = nop i4 # 4
+      i8 = literal %1 # 4
+      i9 = binary %"+", i5, i8 # 4
+      i12 = storeContext %1, %0, i9 # 4
+      i14 = literal %undefined # 1
+      i15 = ret i14 # 1
+  */}, {
+    global: false
+  });
+
   test('just new expression', function() {
     new Proto(1, 2, 3);
   }, function() {/*
