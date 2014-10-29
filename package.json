@@ -1,29 +1,29 @@
 {
-  "name": "ssa.js",
+  "name": "cfg.js",
   "version": "0.7.2",
-  "description": "Javascript AST to SSA converter",
-  "main": "lib/ssa.js",
+  "description": "Javascript AST to CFG converter",
+  "main": "lib/cfg.js",
   "scripts": {
     "test": "mocha --reporter spec test/*-test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:indutny/ssa.js"
+    "url": "git@github.com:js-js/cfg.js"
   },
   "keywords": [
-    "SSA",
+    "CFG",
     "AST"
   ],
   "author": "Fedor Indutny <fedor@indutny.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/indutny/ssa.js/issues"
+    "url": "https://github.com/js-js/cfg.js/issues"
   },
-  "homepage": "https://github.com/indutny/ssa.js",
+  "homepage": "https://github.com/indutny/cfg.js",
   "devDependencies": {
     "escodegen": "^1.4.1",
     "esprima": "~1.2.2",
-    "ssa-ir": "~0.3.0"
+    "cfg-ir": "^0.4.0"
   },
   "dependencies": {
     "tarjan": "^0.5.2"

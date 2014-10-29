@@ -1,4 +1,4 @@
-# Javascript AST to SSA converter
+# Javascript AST to CFG converter
 
 ## Usage
 

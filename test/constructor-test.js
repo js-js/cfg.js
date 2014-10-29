@@ -1,13 +1,13 @@
 var assert = require('assert');
 var esprima = require('esprima');
-var ir = require('ssa-ir');
-var ssa = require('../');
+var ir = require('cfg-ir');
+var cfg = require('../');
 
 var fixtures = require('./fixtures');
 var strip = fixtures.strip;
 var equalLines = fixtures.equalLines;
 
-describe('SSA.js', function() {
+describe('CFG.js', function() {
   function test(name, input, expected, options) {
     it('should ' + name, function() {
       var ast = esprima.parse(
@@ -17,7 +17,7 @@ describe('SSA.js', function() {
       if (options && options.global === false)
         ast.type = 'Brogram';
 
-      var out = ssa.construct(ast);
+      var out = cfg.construct(ast);
       var str = out.map(function(cfg) {
         return ir.stringify(cfg);
       }).join('\n----\n');
