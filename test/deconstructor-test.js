@@ -1,20 +1,20 @@
 var assert = require('assert');
 var escodegen = require('escodegen');
-var ir = require('ssa-ir');
-var ssa = require('../');
+var ir = require('cfg-ir');
+var cfg = require('../');
 
 var fixtures = require('./fixtures');
 var strip = fixtures.strip;
 var equalLines = fixtures.equalLines;
 
-describe('SSA.js/Deconstructor', function() {
+describe('CFG.js/Deconstructor', function() {
   function test(name, input, expected, options) {
     it('should ' + name, function() {
       var repr = ir.parse(
           input.toString().replace(/^function.*{\/\*|\*\/}$/g, '')
       );
 
-      var str = escodegen.generate(ssa.deconstruct(repr, options));
+      var str = escodegen.generate(cfg.deconstruct(repr, options));
 
       var exp = expected.toString().replace(/^function.*{|}$/g, '');
       equalLines(strip(str), strip(exp));

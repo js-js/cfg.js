@@ -4,7 +4,7 @@
   "description": "Javascript AST to CFG converter",
   "main": "lib/cfg.js",
   "scripts": {
-    "test": "mocha --reporter spec test/*-test.js"
+    "test": "mocha --reporter spec test/*-test.js --globals match"
   },
   "repository": {
     "type": "git",
