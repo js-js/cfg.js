@@ -35,10 +35,10 @@ describe('CFG.js', function() {
     block B0
       @a = literal %undefined # 0
       @a = literal %1 # 2
-      i6 = literal %2 # 6
-      @a = binary %"+", @a, i6 # 4
-      i11 = literal %undefined # 0
-      i12 = ret i11 # 0
+      i11 = literal %2 # 6
+      @a = binary %"+", i9, i11 # 4
+      i19 = literal %undefined # 0
+      i20 = ret i19 # 0
   */}, {
     global: false
   });
@@ -57,14 +57,14 @@ describe('CFG.js', function() {
       @a = literal %undefined # 0
       @b = literal %undefined # 0
       @a = literal %1 # 2
-      i7 = branch @a # 4
+      i14 = branch i13 # 4
     block B1 -> B3
       @b = literal %1 # 9
     block B2 -> B3
       @b = literal %2 # 13
     block B3
-      i14 = literal %undefined # 0
-      i15 = ret i14 # 0
+      i26 = literal %undefined # 0
+      i27 = ret i26 # 0
   */}, {
     global: false
   });
@@ -82,18 +82,18 @@ describe('CFG.js', function() {
       @a = literal %undefined # 0
       @b = literal %undefined # 0
       @a = literal %1 # 2
-      i7 = branch @a # 3
+      i14 = branch i13 # 3
     block B1 -> B3
       @b = literal %1 # 7
     block B2 -> B3
       @b = literal %2 # 10
     block B3
-      i13 = loadGlobal %"ret" # 13
-      i15 = pushArg @b # 12
-      i16 = global # 12
-      i18 = call i13, i16, %1 # 12
-      i20 = literal %undefined # 0
-      i21 = ret i20 # 0
+      i24 = loadGlobal %"ret" # 13
+      i27 = pushArg i26 # 12
+      i28 = global # 12
+      i30 = call i24, i28, %1 # 12
+      i32 = literal %undefined # 0
+      i33 = ret i32 # 0
   */}, {
     global: false
   });
@@ -112,25 +112,26 @@ describe('CFG.js', function() {
   }, function() {/*
     block B0 -> B2, B3
       @a = literal %undefined # 0
-      @b = literal %undefined # 0
+      i3 = literal %undefined # 0
       @x = fn %"B1" # 1
+      i14 = storeContext %0, %0, i3 # 0
       @a = literal %1 # 6
-      i13 = branch @a # 7
+      i23 = branch i22 # 7
     block B2 -> B4
-      i15 = literal %1 # 11
-      i18 = storeContext %0, %0, i15 # 10
+      i25 = literal %1 # 11
+      i27 = storeContext %0, %0, i25 # 10
     block B3 -> B4
-      i20 = literal %2 # 14
-      i23 = storeContext %0, %0, i20 # 13
+      i29 = literal %2 # 14
+      i31 = storeContext %0, %0, i29 # 13
     block B4
-      i25 = global # 17
-      i27 = call @x, i25, %0 # 17
-      i29 = literal %undefined # 0
-      i30 = ret i29 # 0
+      i34 = global # 17
+      i36 = call i33, i34, %0 # 17
+      i44 = literal %undefined # 0
+      i45 = ret i44 # 0
     ----
     block B1
-      i6 = loadContext %1, %0 # 4
-      i7 = ret i6 # 3
+      i5 = loadContext %1, %0 # 4
+      i6 = ret i5 # 3
   */}, {
     global: false
   });
@@ -148,15 +149,15 @@ describe('CFG.js', function() {
     block B2 -> B6
     block B3 -> B4
     block B4 -> B5, B2
-      i6 = literal %42 # 6
-      i8 = binary %"<", @i, i6 # 4
-      i9 = branch i8 # 3
+      i11 = literal %42 # 6
+      i13 = binary %"<", i9, i11 # 4
+      i14 = branch i13 # 3
     block B5 -> B1
-      i12 = literal %1 # 10
-      @i = binary %"+", @i, i12 # 8
+      i18 = literal %1 # 10
+      @i = binary %"+", i16, i18 # 8
     block B6
-      i17 = literal %undefined # 0
-      i18 = ret i17 # 0
+      i26 = literal %undefined # 0
+      i27 = ret i26 # 0
   */}, {
     global: false
   });
@@ -175,15 +176,15 @@ describe('CFG.js', function() {
     block B2 -> B6
     block B3 -> B5
     block B4 -> B5, B2
-      i6 = literal %42 # 6
-      i8 = binary %"<", @i, i6 # 4
-      i9 = branch i8 # 3
+      i11 = literal %42 # 6
+      i13 = binary %"<", i9, i11 # 4
+      i14 = branch i13 # 3
     block B5 -> B1
-      i12 = literal %1 # 10
-      @i = binary %"+", @i, i12 # 8
+      i18 = literal %1 # 10
+      @i = binary %"+", i16, i18 # 8
     block B6
-      i17 = literal %undefined # 0
-      i18 = ret i17 # 0
+      i26 = literal %undefined # 0
+      i27 = ret i26 # 0
   */}, {
     global: false
   });
@@ -207,27 +208,27 @@ describe('CFG.js', function() {
     block B2 -> B12
     block B3 -> B4
     block B4 -> B5, B2
-      i8 = literal %42 # 6
-      i10 = binary %"<", @i, i8 # 4
-      i11 = branch i10 # 3
+      i15 = literal %42 # 6
+      i17 = binary %"<", i13, i15 # 4
+      i18 = branch i17 # 3
     block B5 -> B8
       @j = literal %0 # 9
     block B6 -> B8
     block B7 -> B11
     block B8 -> B9
     block B9 -> B10, B7
-      i16 = literal %42 # 13
-      i18 = binary %"<", @j, i16 # 11
-      i19 = branch i18 # 10
+      i26 = literal %42 # 13
+      i28 = binary %"<", i24, i26 # 11
+      i29 = branch i28 # 10
     block B10 -> B6
-      i22 = literal %1 # 18
-      @i = binary %"+", @i, i22 # 16
-      i27 = literal %1 # 22
-      @j = binary %"+", @j, i27 # 20
+      i33 = literal %1 # 18
+      @i = binary %"+", i31, i33 # 16
+      i41 = literal %1 # 22
+      @j = binary %"+", i39, i41 # 20
     block B11 -> B1
     block B12
-      i32 = literal %undefined # 0
-      i33 = ret i32 # 0
+      i49 = literal %undefined # 0
+      i50 = ret i49 # 0
   */}, {
     global: false
   });
@@ -250,29 +251,29 @@ describe('CFG.js', function() {
     block B2 -> B13
     block B3 -> B4
     block B4 -> B5, B2
-      i6 = literal %42 # 6
-      i8 = binary %"<", @i, i6 # 4
-      i9 = branch i8 # 3
+      i11 = literal %42 # 6
+      i13 = binary %"<", i9, i11 # 4
+      i14 = branch i13 # 3
     block B5 -> B6, B7
-      i12 = literal %1 # 11
-      @i = binary %"+", @i, i12 # 9
-      i17 = literal %21 # 15
-      i19 = binary %"<", @i, i17 # 13
-      i20 = branch i19 # 12
+      i18 = literal %1 # 11
+      @i = binary %"+", i16, i18 # 9
+      i26 = literal %21 # 15
+      i28 = binary %"<", i24, i26 # 13
+      i29 = branch i28 # 12
     block B6 -> B9
     block B7 -> B8
     block B8 -> B10, B11
-      i23 = literal %40 # 20
-      i25 = binary %">", @i, i23 # 18
-      i26 = branch i25 # 17
+      i33 = literal %40 # 20
+      i35 = binary %">", i31, i33 # 18
+      i36 = branch i35 # 17
     block B9 -> B3
     block B10 -> B13
     block B11 -> B12
     block B12 -> B1
     block B13 -> B14
     block B14
-      i29 = literal %undefined # 0
-      i30 = ret i29 # 0
+      i40 = literal %undefined # 0
+      i41 = ret i40 # 0
   */}, {
     global: false
   });
@@ -290,20 +291,20 @@ describe('CFG.js', function() {
       @j = literal %1 # 2
       @i = literal %0 # 5
     block B1 -> B3
-      i21 = literal %1 # 17
-      @i = binary %"+", @i, i21 # 15
+      i34 = literal %1 # 17
+      @i = binary %"+", i32, i34 # 15
     block B2 -> B6
     block B3 -> B4
     block B4 -> B5, B2
-      i10 = literal %42 # 8
-      i12 = binary %"<", @i, i10 # 6
-      i13 = branch i12 # 3
+      i19 = literal %42 # 8
+      i21 = binary %"<", i17, i19 # 6
+      i22 = branch i21 # 3
     block B5 -> B1
-      i16 = literal %2 # 14
-      @j = binary %"*", @j, i16 # 12
+      i26 = literal %2 # 14
+      @j = binary %"*", i24, i26 # 12
     block B6
-      i26 = literal %undefined # 0
-      i27 = ret i26 # 0
+      i42 = literal %undefined # 0
+      i43 = ret i42 # 0
   */}, {
     global: false
   });
@@ -390,11 +391,11 @@ describe('CFG.js', function() {
     block B0
       @i = literal %undefined # 0
       @i = literal %0 # 2
-      i5 = nop @i # 4
-      i8 = literal %1 # 4
-      @i = binary %"+", i5, i8 # 4
-      i11 = literal %undefined # 0
-      i12 = ret i11 # 0
+      i10 = nop i9 # 4
+      i13 = literal %1 # 4
+      @i = binary %"+", i10, i13 # 4
+      i18 = literal %undefined # 0
+      i19 = ret i18 # 0
   */}, {
     global: false
   });
@@ -406,10 +407,10 @@ describe('CFG.js', function() {
     block B0
       @i = literal %undefined # 0
       @i = literal %0 # 2
-      i6 = literal %1 # 4
-      @i = binary %"+", @i, i6 # 4
-      i10 = literal %undefined # 0
-      i11 = ret i10 # 0
+      i11 = literal %1 # 4
+      @i = binary %"+", i9, i11 # 4
+      i17 = literal %undefined # 0
+      i18 = ret i17 # 0
   */}, {
     global: false
   });
@@ -460,19 +461,20 @@ describe('CFG.js', function() {
     }
   }, function() {/*
     block B0
-      @i = literal %undefined # 0
+      i1 = literal %undefined # 0
       @test = fn %"B1" # 1
-      i19 = literal %undefined # 0
-      i20 = ret i19 # 0
+      i21 = storeContext %0, %0, i1 # 0
+      i27 = literal %undefined # 0
+      i28 = ret i27 # 0
     ----
     block B1
-      i4 = loadContext %1, %0 # 5
-      i5 = nop i4 # 4
-      i8 = literal %1 # 4
-      i9 = binary %"+", i5, i8 # 4
-      i12 = storeContext %1, %0, i9 # 4
-      i14 = literal %undefined # 1
-      i15 = ret i14 # 1
+      i3 = loadContext %1, %0 # 5
+      i4 = nop i3 # 4
+      i7 = literal %1 # 4
+      i8 = binary %"+", i4, i7 # 4
+      i10 = storeContext %1, %0, i8 # 4
+      i16 = literal %undefined # 1
+      i17 = ret i16 # 1
   */}, {
     global: false
   });
@@ -515,9 +517,9 @@ describe('CFG.js', function() {
     block B0
       @i = literal %undefined # 0
       @i = literal %0 # 2
-      i6 = unary %"-", @i # 4
-      i8 = literal %undefined # 0
-      i9 = ret i8 # 0
+      i11 = unary %"-", i9 # 4
+      i13 = literal %undefined # 0
+      i14 = ret i13 # 0
   */}, {
     global: false
   });
@@ -536,10 +538,10 @@ describe('CFG.js', function() {
   }, function() {/*
     block B0
       @a = literal %undefined # 0
-      i3 = literal %"b" # 3
-      i5 = deleteProperty @a, i3 # 3
-      i7 = literal %undefined # 0
-      i8 = ret i7 # 0
+      i5 = literal %"b" # 3
+      i8 = deleteProperty i7, i5 # 3
+      i10 = literal %undefined # 0
+      i11 = ret i10 # 0
   */}, {
     global: false
   });
@@ -634,46 +636,46 @@ describe('CFG.js', function() {
     a(1, 2, 3);
   }, function() {/*
     block B0
-      i45 = fn %"B1" # 1
-      i47 = storeGlobal %"a", i45 # 0
-      i49 = loadGlobal %"a" # 28
-      i51 = literal %1 # 29
-      i53 = literal %2 # 30
-      i55 = literal %3 # 31
-      i56 = pushArg i55 # 27
-      i57 = pushArg i53 # 27
-      i58 = pushArg i51 # 27
-      i59 = global # 27
-      i61 = call i49, i59, %3 # 27
-      i62 = ret i61 # 27
+      i57 = fn %"B1" # 1
+      i59 = storeGlobal %"a", i57 # 0
+      i61 = loadGlobal %"a" # 28
+      i63 = literal %1 # 29
+      i65 = literal %2 # 30
+      i67 = literal %3 # 31
+      i68 = pushArg i67 # 27
+      i69 = pushArg i65 # 27
+      i70 = pushArg i63 # 27
+      i71 = global # 27
+      i73 = call i61, i71, %3 # 27
+      i74 = ret i73 # 27
     ----
     block B1 -> B2, B3
       @b = loadArg %0 # 1
       @c = loadArg %1 # 1
       @d = loadArg %2 # 1
-      i6 = self # 6
-      i8 = literal %0 # 7
-      i10 = literal %0 # 8
-      i12 = literal %0 # 9
-      i13 = pushArg i12 # 5
-      i14 = pushArg i10 # 5
-      i15 = pushArg i8 # 5
-      i16 = global # 5
-      i18 = call i6, i16, %3 # 5
-      i20 = literal %0 # 10
-      i22 = binary %"<", i18, i20 # 4
-      i23 = branch i22 # 3
+      i12 = self # 6
+      i14 = literal %0 # 7
+      i16 = literal %0 # 8
+      i18 = literal %0 # 9
+      i19 = pushArg i18 # 5
+      i20 = pushArg i16 # 5
+      i21 = pushArg i14 # 5
+      i22 = global # 5
+      i24 = call i12, i22, %3 # 5
+      i26 = literal %0 # 10
+      i28 = binary %"<", i24, i26 # 4
+      i29 = branch i28 # 3
     block B2
-      i25 = literal %0 # 15
-      i28 = binary %"-", i25, @b # 14
-      i31 = binary %"-", i28, @c # 13
-      i34 = binary %"-", i31, @d # 12
-      i35 = ret i34 # 11
+      i31 = literal %0 # 15
+      i35 = binary %"-", i31, i33 # 14
+      i39 = binary %"-", i35, i37 # 13
+      i43 = binary %"-", i39, i41 # 12
+      i44 = ret i43 # 11
     block B3 -> B4
     block B4
-      i39 = binary %"+", @b, @c # 21
-      i42 = binary %"+", i39, @d # 20
-      i43 = ret i42 # 19
+      i50 = binary %"+", i46, i48 # 21
+      i54 = binary %"+", i50, i52 # 20
+      i55 = ret i54 # 19
   */});
 
   test('just a this expression', function() {
@@ -703,15 +705,15 @@ describe('CFG.js', function() {
     }
   }, function() {/*
     block B0
-      i7 = fn %"B1" # 1
-      i9 = storeGlobal %"test", i7 # 0
-      i11 = literal %undefined # 0
-      i12 = ret i11 # 0
+      i10 = fn %"B1" # 1
+      i12 = storeGlobal %"test", i10 # 0
+      i14 = literal %undefined # 0
+      i15 = ret i14 # 0
     ----
     block B1
       @a = loadArg %0 # 1
-      i4 = literal %undefined # 1
-      i5 = ret i4 # 1
+      i7 = literal %undefined # 1
+      i8 = ret i7 # 1
   */});
 
   test('function boundary regression', function() {
@@ -724,12 +726,12 @@ describe('CFG.js', function() {
     run();
   }, function() {/*
     block B0
-      i27 = fn %"B1" # 1
-      i29 = storeGlobal %"run", i27 # 0
-      i31 = loadGlobal %"run" # 22
-      i32 = global # 21
-      i34 = call i31, i32, %0 # 21
-      i35 = ret i34 # 21
+      i44 = fn %"B1" # 1
+      i46 = storeGlobal %"run", i44 # 0
+      i48 = loadGlobal %"run" # 22
+      i49 = global # 21
+      i51 = call i48, i49, %0 # 21
+      i52 = ret i51 # 21
     ----
     block B1 -> B4
       @x = literal %undefined # 1
@@ -737,18 +739,44 @@ describe('CFG.js', function() {
       @x = literal %1 # 4
       @i = literal %0 # 7
     block B2 -> B4
-      i19 = nop @i # 15
-      i22 = literal %1 # 15
-      @i = binary %"+", i19, i22 # 15
+      i33 = nop i32 # 15
+      i36 = literal %1 # 15
+      @i = binary %"+", i33, i36 # 15
     block B3 -> B7
     block B4 -> B5
     block B5 -> B6, B3
-      i10 = literal %10 # 10
-      i12 = binary %"<", @i, i10 # 8
-      i13 = branch i12 # 5
+      i19 = literal %10 # 10
+      i21 = binary %"<", i17, i19 # 8
+      i22 = branch i21 # 5
     block B6 -> B2
-      @x = binary %"+", @x, @i # 12
-    block B7
-      i25 = ret @x # 17
+      @x = binary %"+", i24, i26 # 12
+      block B7
+      i42 = ret i41 # 17
   */});
+
+  test('just context regression', function() {
+    function outer() {
+      var x;
+      return function inner() {
+        return x;
+      }
+    }
+  }, function() {/*
+    block B0
+      @outer = fn %"B1" # 1
+      i14 = literal %undefined # 0
+      i15 = ret i14 # 0
+    ----
+    block B1
+      i1 = literal %undefined # 1
+      i3 = storeContext %0, %0, i1 # 1
+      i5 = fn %"B0" # 5
+      i6 = ret i5 # 4
+    ----
+    block B0
+      i1 = loadContext %1, %0 # 5
+      i2 = ret i1 # 5
+  */}, {
+    global: false
+  });
 });
