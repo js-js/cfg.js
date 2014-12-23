@@ -1,6 +1,6 @@
 {
   "name": "cfg.js",
-  "version": "0.8.5",
+  "version": "0.9.0",
   "description": "Javascript AST to CFG converter",
   "main": "lib/cfg.js",
   "scripts": {
