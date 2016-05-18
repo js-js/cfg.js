@@ -151,5 +151,19 @@ describe('CFG.js/Constructor', () => {
         }
       }`);
     });
+
+    it('should construct local load', () => {
+      test(() => {
+        var a = 0;
+
+        a;
+      }, `pipeline {
+        b0 {
+          i0 = literal 0
+          i1 = ssa:store "a", i0
+          i2 = ssa:load "a"
+        }
+      }`);
+    });
   });
 });
