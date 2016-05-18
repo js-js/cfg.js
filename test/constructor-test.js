@@ -152,6 +152,23 @@ describe('CFG.js/Constructor', () => {
       }`);
     });
 
+    it('should construct local assignment in a block', () => {
+      test(() => {
+        var a = 0;
+
+        {
+          a = 1;
+        }
+      }, `pipeline {
+        b0 {
+          i0 = literal 0
+          i1 = ssa:store "a", i0
+          i2 = literal 1
+          i3 = ssa:store "a", i2
+        }
+      }`);
+    });
+
     it('should construct local load', () => {
       test(() => {
         var a = 0;
@@ -162,6 +179,54 @@ describe('CFG.js/Constructor', () => {
           i0 = literal 0
           i1 = ssa:store "a", i0
           i2 = ssa:load "a"
+        }
+      }`);
+    });
+  });
+
+  describe('es6 scope', () => {
+    it('should lookup const variables', () => {
+      test(() => {
+        const a = 1;
+
+        {
+          const a = 2;
+          a;
+        }
+
+        a;
+      }, `pipeline {
+        b0 {
+          i0 = literal 1
+          i1 = ssa:store "a", i0
+          i2 = literal 2
+          i3 = ssa:store "1/a", i2
+          i4 = ssa:load "1/a"
+          i5 = ssa:load "a"
+        }
+      }`);
+    });
+
+    it('should modify let variables', () => {
+      test(() => {
+        let a = 1;
+
+        {
+          let a = 2;
+          a = 3;
+        }
+
+        a = 4;
+      }, `pipeline {
+        b0 {
+          i0 = literal 1
+          i1 = ssa:store "a", i0
+          i2 = literal 2
+          i3 = ssa:store "1/a", i2
+          i4 = literal 3
+          i5 = ssa:store "1/a", i4
+          i6 = literal 4
+          i7 = ssa:store "a", i6
         }
       }`);
     });
