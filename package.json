@@ -21,12 +21,11 @@
   },
   "homepage": "https://github.com/indutny/cfg.js",
   "devDependencies": {
-    "cfg-ir": "^0.4.0",
-    "escodegen": "^1.4.1",
-    "esprima": "~1.2.2",
-    "mocha": "^2.0.1"
+    "assert-text": "^1.1.2",
+    "esprima": "^2.7.2",
+    "mocha": "^2.4.5"
   },
   "dependencies": {
-    "tarjan": "^0.5.2"
+    "json-pipeline": "^3.12.3"
   }
 }
