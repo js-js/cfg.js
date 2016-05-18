@@ -113,4 +113,43 @@ describe('CFG.js/Constructor', () => {
       }`);
     });
   });
+
+  describe('es5 scope', () => {
+    it('should construct empty variable declaration', () => {
+      test(() => {
+        var a;
+      }, `pipeline {
+        b0 {
+          i0 = loadGlobal "undefined"
+          i1 = ssa:store "a", i0
+        }
+      }`);
+    });
+
+    it('should construct variable declaration', () => {
+      test(() => {
+        var a = 1;
+      }, `pipeline {
+        b0 {
+          i0 = literal 1
+          i1 = ssa:store "a", i0
+        }
+      }`);
+    });
+
+    it('should construct local assignment', () => {
+      test(() => {
+        var a = 0;
+
+        a = 1;
+      }, `pipeline {
+        b0 {
+          i0 = literal 0
+          i1 = ssa:store "a", i0
+          i2 = literal 1
+          i3 = ssa:store "a", i2
+        }
+      }`);
+    });
+  });
 });
