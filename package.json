@@ -26,6 +26,7 @@
     "mocha": "^2.4.5"
   },
   "dependencies": {
+    "escope": "^3.6.0",
     "json-pipeline": "^3.12.3"
   }
 }

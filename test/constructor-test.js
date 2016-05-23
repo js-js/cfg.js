@@ -115,70 +115,19 @@ describe('CFG.js/Constructor', () => {
   });
 
   describe('es5 scope', () => {
-    it('should construct empty variable declaration', () => {
-      test(() => {
-        var a;
-      }, `pipeline {
-        b0 {
-          i0 = loadGlobal "undefined"
-          i1 = ssa:store "a", i0
-        }
-      }`);
-    });
-
-    it('should construct variable declaration', () => {
-      test(() => {
-        var a = 1;
-      }, `pipeline {
-        b0 {
-          i0 = literal 1
-          i1 = ssa:store "a", i0
-        }
-      }`);
-    });
-
-    it('should construct local assignment', () => {
-      test(() => {
-        var a = 0;
-
-        a = 1;
-      }, `pipeline {
-        b0 {
-          i0 = literal 0
-          i1 = ssa:store "a", i0
-          i2 = literal 1
-          i3 = ssa:store "a", i2
-        }
-      }`);
-    });
-
-    it('should construct local assignment in a block', () => {
-      test(() => {
-        var a = 0;
-
-        {
-          a = 1;
-        }
-      }, `pipeline {
-        b0 {
-          i0 = literal 0
-          i1 = ssa:store "a", i0
-          i2 = literal 1
-          i3 = ssa:store "a", i2
-        }
-      }`);
-    });
-
-    it('should construct local load', () => {
+    it('should construct global var decl', () => {
       test(() => {
         var a = 0;
 
         a;
+        a = 1;
       }, `pipeline {
         b0 {
           i0 = literal 0
-          i1 = ssa:store "a", i0
-          i2 = ssa:load "a"
+          i1 = storeGlobal "a", i0
+          i2 = loadGlobal "a"
+          i3 = literal 1
+          i4 = storeGlobal "a", i3
         }
       }`);
     });
@@ -187,46 +136,62 @@ describe('CFG.js/Constructor', () => {
   describe('es6 scope', () => {
     it('should lookup const variables', () => {
       test(() => {
-        const a = 1;
-
         {
-          const a = 2;
+          a;
+          const a = 1;
+
+          {
+            const a = 2;
+            a;
+          }
+
           a;
         }
-
-        a;
       }, `pipeline {
         b0 {
-          i0 = literal 1
-          i1 = ssa:store "a", i0
-          i2 = literal 2
-          i3 = ssa:store "1/a", i2
-          i4 = ssa:load "1/a"
-          i5 = ssa:load "a"
+          i0 = oddball "hole"
+          i1 = ssa:store "0/a", i0
+          i2 = ssa:load "0/a"
+          i3 = literal 1
+          i4 = ssa:store "0/a", i3
+          i5 = oddball "hole"
+          i6 = ssa:store "1/a", i5
+          i7 = literal 2
+          i8 = ssa:store "1/a", i7
+          i9 = ssa:load "1/a"
+          i10 = ssa:load "0/a"
         }
       }`);
     });
 
     it('should modify let variables', () => {
       test(() => {
-        let a = 1;
-
         {
-          let a = 2;
-          a = 3;
-        }
+          a;
+          let a = 1;
 
-        a = 4;
+          {
+            let a = 2;
+            a = 3;
+          }
+
+          a = 4;
+        }
       }, `pipeline {
         b0 {
-          i0 = literal 1
-          i1 = ssa:store "a", i0
-          i2 = literal 2
-          i3 = ssa:store "1/a", i2
-          i4 = literal 3
-          i5 = ssa:store "1/a", i4
-          i6 = literal 4
-          i7 = ssa:store "a", i6
+          i0 = oddball "hole"
+          i1 = ssa:store "0/a", i0
+          i2 = ssa:load "0/a"
+          i3 = literal 1
+          i4 = ssa:store "0/a", i3
+          i5 = oddball "hole"
+          i6 = ssa:store "1/a", i5
+          i7 = literal 2
+          i8 = ssa:store "1/a", i7
+          i9 = literal 3
+          i10 = ssa:store "1/a", i9
+          i11 = literal 4
+          i12 = ssa:store "0/a", i11
         }
       }`);
     });
