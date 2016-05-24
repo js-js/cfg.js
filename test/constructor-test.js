@@ -196,4 +196,26 @@ describe('CFG.js/Constructor', () => {
       }`);
     });
   });
+
+  describe('functions', () => {
+    it('should construct function declaration', () => {
+      test(() => {
+        a;
+        function a() {
+          a;
+        }
+      }, `pipeline {
+        b0 {
+          i0 = fn 1
+          i1 = storeGlobal "a", i0
+          i2 = loadGlobal "a"
+        }
+      }
+      pipeline {
+        b0 {
+          i0 = loadGlobal "a"
+        }
+      }`);
+    });
+  });
 });
