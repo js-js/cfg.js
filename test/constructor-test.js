@@ -9,8 +9,8 @@ const cfgjs = require('../');
 
 function test(fn, expected) {
   const pipelines = cfgjs.build(fixtures.parse(fn));
-  const actual = pipelines.map((cfg) => {
-    return cfg.render({ cfg: true }, 'printable');
+  const actual = pipelines.map((cfg, i) => {
+    return (i === 0 ? '' : (i + ': ')) + cfg.render({ cfg: true }, 'printable');
   }).join('\n');
 
   assertText.equal(actual, expected);
@@ -146,7 +146,7 @@ describe('CFG.js/Constructor', () => {
           i1 = storeGlobal "local", i0
         }
       }
-      pipeline {
+      1: pipeline {
         b0 {
           i0 = literal 0
           i1 = ssa:store "0/a", i0
@@ -236,9 +236,53 @@ describe('CFG.js/Constructor', () => {
           i2 = loadGlobal "a"
         }
       }
-      pipeline {
+      1: pipeline {
         b0 {
           i0 = loadGlobal "a"
+        }
+      }`);
+    });
+
+    it('should construct function expression', () => {
+      test(() => {
+        var b = function a() {
+          a;
+        }
+      }, `pipeline {
+        b0 {
+          i0 = fn 1
+          i1 = storeGlobal "b", i0
+        }
+      }
+      1: pipeline {
+        b0 {
+          i0 = loadContext 0, -1
+        }
+      }`);
+    });
+
+    it('should construct proper function context name ref', () => {
+      test(() => {
+        var b = function a() {
+          var c = function d() {
+            a;
+          }
+        }
+      }, `pipeline {
+        b0 {
+          i0 = fn 1
+          i1 = storeGlobal "b", i0
+        }
+      }
+      1: pipeline {
+        b0 {
+          i0 = fn 2
+          i1 = ssa:store "0/c", i0
+        }
+      }
+      2: pipeline {
+        b0 {
+          i0 = loadContext 1, -1
         }
       }`);
     });
