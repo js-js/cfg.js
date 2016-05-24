@@ -131,6 +131,31 @@ describe('CFG.js/Constructor', () => {
         }
       }`);
     });
+
+    it('should construct local var decl', () => {
+      test(() => {
+        function local() {
+          var a = 0;
+
+          a;
+          a = 1;
+        }
+      }, `pipeline {
+        b0 {
+          i0 = fn 1
+          i1 = storeGlobal "local", i0
+        }
+      }
+      pipeline {
+        b0 {
+          i0 = literal 0
+          i1 = ssa:store "0/a", i0
+          i2 = ssa:load "0/a"
+          i3 = literal 1
+          i4 = ssa:store "0/a", i3
+        }
+      }`);
+    });
   });
 
   describe('es6 scope', () => {
