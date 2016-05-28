@@ -379,5 +379,39 @@ describe('CFG.js/Constructor', () => {
         }
       }`);
     });
+
+    it('should support update operators', () => {
+      test(() => {
+        function f() {
+          var x = 1;
+          var y;
+          y = x++;
+          y = ++x;
+        }
+      }, `pipeline {
+        b0 {
+          i0 = global
+          i1 = literal "f"
+          i2 = fn 1
+          i3 = storeProperty i0, i1, i2
+        }
+      }
+      1: pipeline {
+        b0 {
+          i0 = literal 1
+          i1 = ssa:store "0/x", i0
+          i2 = ssa:load "0/x"
+          i3 = literal 1
+          i4 = binary "+", i2, i3
+          i5 = ssa:store "0/x", i4
+          i6 = ssa:store "1/y", i2
+          i7 = ssa:load "0/x"
+          i8 = literal 1
+          i9 = binary "+", i7, i8
+          i10 = ssa:store "0/x", i9
+          i11 = ssa:store "1/y", i10
+        }
+      }`);
+    });
   });
 });
