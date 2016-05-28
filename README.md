@@ -10,9 +10,6 @@ WIP
 * `loadProperty(obj, prop)`
 * `storeProperty(obj, prop, value)`
 * `deleteProperty(obj, prop)`
-* `loadGlobal(%prop)`
-* `storeGlobal(%prop, value)`
-* `deleteGlobal(%prop)`
 * `loadContext(%depth, %index)`
 * `storeContext(%depth, %index, value)`
 * `binary(%operator, left, right)`
