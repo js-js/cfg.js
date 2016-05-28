@@ -319,4 +319,65 @@ describe('CFG.js/Constructor', () => {
       }`);
     });
   });
+
+  describe('math', () => {
+    it('should support unary operations', () => {
+      test(() => {
+        +1;
+      }, `pipeline {
+        b0 {
+          i0 = literal 1
+          i1 = unary "+", i0
+        }
+      }`);
+    });
+
+    it('should support binary operations', () => {
+      test(() => {
+        2 + 2 == 4;
+      }, `pipeline {
+        b0 {
+          i0 = literal 2
+          i1 = literal 2
+          i2 = binary "+", i0, i1
+          i3 = literal 4
+          i4 = binary "==", i2, i3
+        }
+      }`);
+    });
+
+    it('should execute operations according to precedence', () => {
+      test(() => {
+        var t = 1 - 2 * 3;
+      }, `pipeline {
+        b0 {
+          i0 = global
+          i1 = literal "t"
+          i2 = literal 1
+          i3 = literal 2
+          i4 = literal 3
+          i5 = binary "*", i3, i4
+          i6 = binary "-", i2, i5
+          i7 = storeProperty i0, i1, i6
+        }
+      }`);
+    });
+
+    it('should support combined assignment/binary operations', () => {
+      test(() => {
+        obj.prop += 10;
+      }, `pipeline {
+        b0 {
+          i0 = global
+          i1 = literal "obj"
+          i2 = loadProperty i0, i1
+          i3 = literal "prop"
+          i4 = loadProperty i2, i3
+          i5 = literal 10
+          i6 = binary "+", i4, i5
+          i7 = storeProperty i2, i3, i6
+        }
+      }`);
+    });
+  });
 });
