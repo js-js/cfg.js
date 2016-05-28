@@ -71,7 +71,8 @@ describe('CFG.js/Constructor', () => {
       }, `pipeline {
         b0 {
           i0 = loadGlobal "a"
-          i1 = loadNamedProperty "b", i0
+          i1 = literal "b"
+          i2 = loadProperty i0, i1
         }
       }`);
     });
@@ -82,8 +83,9 @@ describe('CFG.js/Constructor', () => {
       }, `pipeline {
         b0 {
           i0 = loadGlobal "a"
-          i1 = literal 1
-          i2 = storeNamedProperty "b", i0, i1
+          i1 = literal "b"
+          i2 = literal 1
+          i3 = storeProperty i0, i1, i2
         }
       }`);
     });
