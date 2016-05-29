@@ -26,7 +26,7 @@ describe('CFG.js/Constructor', () => {
   });
 
   describe('literals', () => {
-    it('should construct number', () => {
+    it('should construct numbers and strings', () => {
       test(() => {
         1;
         1.23;
@@ -36,6 +36,16 @@ describe('CFG.js/Constructor', () => {
           i0 = literal 1
           i1 = literal 1.23
           i2 = literal "hello"
+        }
+      }`);
+    });
+
+    it('should construct regexp', () => {
+      test(() => {
+        /[a-z]/g;
+      }, `pipeline {
+        b0 {
+          i0 = regexp "[a-z]", "g"
         }
       }`);
     });
