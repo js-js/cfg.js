@@ -413,5 +413,20 @@ describe('CFG.js/Constructor', () => {
         }
       }`);
     });
+
+    it('should support sequence (comma) expressions', () => {
+      test(() => {
+        a = (1, 2, 3);
+      }, `pipeline {
+        b0 {
+          i0 = global
+          i1 = literal "a"
+          i2 = literal 1
+          i3 = literal 2
+          i4 = literal 3
+          i5 = storeProperty i0, i1, i4
+        }
+      }`);
+    });
   });
 });
