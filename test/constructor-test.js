@@ -47,7 +47,9 @@ describe('CFG.js/Constructor', () => {
         a;
       }, `pipeline {
         b0 {
-          i0 = loadGlobal "a"
+          i0 = global
+          i1 = literal "a"
+          i2 = loadProperty i0, i1
         }
       }`);
     });
@@ -57,8 +59,10 @@ describe('CFG.js/Constructor', () => {
         a = 1;
       }, `pipeline {
         b0 {
-          i0 = literal 1
-          i1 = storeGlobal "a", i0
+          i0 = global
+          i1 = literal "a"
+          i2 = literal 1
+          i3 = storeProperty i0, i1, i2
         }
       }`);
     });
@@ -70,8 +74,11 @@ describe('CFG.js/Constructor', () => {
         a.b;
       }, `pipeline {
         b0 {
-          i0 = loadGlobal "a"
-          i1 = loadNamedProperty "b", i0
+          i0 = global
+          i1 = literal "a"
+          i2 = loadProperty i0, i1
+          i3 = literal "b"
+          i4 = loadProperty i2, i3
         }
       }`);
     });
@@ -81,9 +88,12 @@ describe('CFG.js/Constructor', () => {
         a.b = 1;
       }, `pipeline {
         b0 {
-          i0 = loadGlobal "a"
-          i1 = literal 1
-          i2 = storeNamedProperty "b", i0, i1
+          i0 = global
+          i1 = literal "a"
+          i2 = loadProperty i0, i1
+          i3 = literal "b"
+          i4 = literal 1
+          i5 = storeProperty i2, i3, i4
         }
       }`);
     });
@@ -93,9 +103,11 @@ describe('CFG.js/Constructor', () => {
         a['b'];
       }, `pipeline {
         b0 {
-          i0 = loadGlobal "a"
-          i1 = literal "b"
+          i0 = global
+          i1 = literal "a"
           i2 = loadProperty i0, i1
+          i3 = literal "b"
+          i4 = loadProperty i2, i3
         }
       }`);
     });
@@ -105,10 +117,12 @@ describe('CFG.js/Constructor', () => {
         a['b'] = 1;
       }, `pipeline {
         b0 {
-          i0 = loadGlobal "a"
-          i1 = literal "b"
-          i2 = literal 1
-          i3 = storeProperty i0, i1, i2
+          i0 = global
+          i1 = literal "a"
+          i2 = loadProperty i0, i1
+          i3 = literal "b"
+          i4 = literal 1
+          i5 = storeProperty i2, i3, i4
         }
       }`);
     });
@@ -123,11 +137,17 @@ describe('CFG.js/Constructor', () => {
         a = 1;
       }, `pipeline {
         b0 {
-          i0 = literal 0
-          i1 = storeGlobal "a", i0
-          i2 = loadGlobal "a"
-          i3 = literal 1
-          i4 = storeGlobal "a", i3
+          i0 = global
+          i1 = literal "a"
+          i2 = literal 0
+          i3 = storeProperty i0, i1, i2
+          i4 = global
+          i5 = literal "a"
+          i6 = loadProperty i4, i5
+          i7 = global
+          i8 = literal "a"
+          i9 = literal 1
+          i10 = storeProperty i7, i8, i9
         }
       }`);
     });
@@ -142,8 +162,10 @@ describe('CFG.js/Constructor', () => {
         }
       }, `pipeline {
         b0 {
-          i0 = fn 1
-          i1 = storeGlobal "local", i0
+          i0 = global
+          i1 = literal "local"
+          i2 = fn 1
+          i3 = storeProperty i0, i1, i2
         }
       }
       1: pipeline {
@@ -231,14 +253,20 @@ describe('CFG.js/Constructor', () => {
         }
       }, `pipeline {
         b0 {
-          i0 = fn 1
-          i1 = storeGlobal "a", i0
-          i2 = loadGlobal "a"
+          i0 = global
+          i1 = literal "a"
+          i2 = fn 1
+          i3 = storeProperty i0, i1, i2
+          i4 = global
+          i5 = literal "a"
+          i6 = loadProperty i4, i5
         }
       }
       1: pipeline {
         b0 {
-          i0 = loadGlobal "a"
+          i0 = global
+          i1 = literal "a"
+          i2 = loadProperty i0, i1
         }
       }`);
     });
@@ -250,8 +278,10 @@ describe('CFG.js/Constructor', () => {
         }
       }, `pipeline {
         b0 {
-          i0 = fn 1
-          i1 = storeGlobal "b", i0
+          i0 = global
+          i1 = literal "b"
+          i2 = fn 1
+          i3 = storeProperty i0, i1, i2
         }
       }
       1: pipeline {
@@ -270,8 +300,10 @@ describe('CFG.js/Constructor', () => {
         }
       }, `pipeline {
         b0 {
-          i0 = fn 1
-          i1 = storeGlobal "b", i0
+          i0 = global
+          i1 = literal "b"
+          i2 = fn 1
+          i3 = storeProperty i0, i1, i2
         }
       }
       1: pipeline {
