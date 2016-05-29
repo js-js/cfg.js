@@ -409,7 +409,7 @@ describe('CFG.js/Constructor', () => {
           i8 = literal 1
           i9 = binary "+", i7, i8
           i10 = ssa:store "0/x", i9
-          i11 = ssa:store "1/y", i10
+          i11 = ssa:store "1/y", i9
         }
       }`);
     });
