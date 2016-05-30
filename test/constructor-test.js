@@ -439,4 +439,127 @@ describe('CFG.js/Constructor', () => {
       }`);
     });
   });
+
+  describe('conditional', () => {
+    it('statement should be supported', () => {
+      test(() => {
+        if (true) {
+          'x';
+        } else {
+          'y';
+        }
+      }, `pipeline {
+        b0 {
+          i0 = literal true
+          i1 = if ^b0, i0
+        }
+        b0 -> b1, b2
+        b1 {
+          i2 = literal "x"
+          i3 = jump ^b1
+        }
+        b1 -> b3
+        b2 {
+          i4 = literal "y"
+          i5 = jump ^b2
+        }
+        b2 -> b3
+        b3 {
+        }
+      }`);
+    });
+
+    it('expression should evaluate', () => {
+      test(() => {
+        true ? 'x' : 'y';
+      }, `pipeline {
+        b0 {
+          i0 = literal true
+          i1 = if ^b0, i0
+        }
+        b0 -> b1, b2
+        b1 {
+          i2 = literal "x"
+          i3 = jump ^b1
+        }
+        b1 -> b3
+        b2 {
+          i4 = literal "y"
+          i5 = jump ^b2
+        }
+        b2 -> b3
+        b3 {
+          i6 = phi ^b3, i2, i4
+        }
+      }`);
+    });
+
+    it('statement without else should be supported', () => {
+      test(() => {
+        'a';
+        if (true) 'b';
+        'c';
+      }, `pipeline {
+        b0 {
+          i0 = literal "a"
+          i1 = literal true
+          i2 = if ^b0, i1
+        }
+        b0 -> b1, b2
+        b1 {
+          i3 = literal "b"
+          i4 = jump ^b1
+        }
+        b1 -> b2
+        b2 {
+          i5 = literal "c"
+        }
+      }`)
+    });
+
+    test(() => {
+      if (true ? 1 : 2) {
+        'x';
+      } else {
+        'y';
+      }
+    }, `pipeline {
+      b0 {
+        i0 = literal true
+        i1 = if ^b0, i0
+      }
+      b0 -> b1, b2
+      b1 {
+        i2 = literal 1
+        i3 = jump ^b1
+      }
+      b1 -> b3
+      b2 {
+        i4 = literal 2
+        i5 = jump ^b2
+      }
+      b2 -> b3
+      b3 {
+        i6 = phi ^b3, i2, i4
+        i7 = jump ^i6
+      }
+      b3 -> b4
+      b4 {
+        i8 = if ^b4, i6
+      }
+      b4 -> b5, b6
+      b5 {
+        i9 = literal "x"
+        i10 = jump ^b5
+      }
+      b5 -> b7
+      b6 {
+        i11 = literal "y"
+        i12 = jump ^b6
+      }
+      b6 -> b7
+      b7 {
+      }
+    }`);
+  });
 });
