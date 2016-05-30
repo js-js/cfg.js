@@ -439,4 +439,28 @@ describe('CFG.js/Constructor', () => {
       }`);
     });
   });
+
+  it('should ignore empty statements', () => {
+    test(() => {
+      1
+      ;
+      ;
+      2
+    }, `pipeline {
+      b0 {
+        i0 = literal 1
+        i1 = literal 2
+      }
+    }`)
+  });
+
+  it('should translate debugger statements as-is', () => {
+    test(() => {
+      debugger;
+    }, `pipeline {
+      b0 {
+        i0 = debugger
+      }
+    }`);
+  });
 });
